@@ -1,11 +1,15 @@
 import os
-from lib import doc_parts, problem, exam_parts
-from lib import make_quadratic_eq, make_linear_eq, make_rational_poly_simplify
-from lib import make_poly_ratio_limit, make_chain_rule_prob, make_quotient_rule_prob
-from lib import make_horizontal_tangents, make_find_derivative_at_value
-from worksheet import Document, _problems_map
+from examgen.lib.docparts import doc_parts, problem, exam_parts
+from examgen.lib.algebra import make_quadratic_eq, make_linear_eq, make_rational_poly_simplify
+from examgen.lib.calc1 import make_poly_ratio_limit, \
+    make_chain_rule_prob, \
+    make_quotient_rule_prob, \
+    make_horizontal_tangents, \
+    make_find_derivative_at_value
+from examgen.worksheet import Document, _problems_map
 
-class exam(object):
+
+class Exam(object):
     """
     Class for managing an exam.
     """
@@ -19,8 +23,15 @@ class exam(object):
         self.fname = fname
         self.exam = Document(fname, title, savetex, doc_generator=exam_parts)
 
-    def add_problem(self, problem_type, instructions, points=1, vspace=200,
-                    args=(), kwargs={}):
+    def add_problem(
+            self,
+            problem_type,
+            instructions,
+            points=1,
+            vspace=200,
+            args=(),
+            kwargs={}
+    ):
         """
         Method for adding a section of problems to an exam & solutions.
         problem_type : name of the type of problem, which is mapped to a
@@ -46,7 +57,6 @@ class exam(object):
         problem_code = problem(instructions, prob, soln, points)
         problem_code += "\\vspace{%spt}" % vspace
         self.exam.add(problem_code)
-        
 
     def write(self):
         self.exam.write_compile(remove_aux=False)
@@ -59,25 +69,47 @@ class exam(object):
         self.exam.start = self.exam.start.replace("\\printanswers", "\\noprintanswers")
 
 
-if __name__ == "__main__":
-
-    myexam = exam("algebra1", "Algebra 101 exam 1", savetex=True)
-    myexam.add_problem(make_linear_eq, "Find all solutions")
-    myexam.add_problem(make_rational_poly_simplify, "Simplify")
-    myexam.add_problem(make_quadratic_eq, "Find all solutions", kwargs={"var": "x",
-                                                                  "integer" : 1})
-    myexam.add_problem(make_poly_ratio_limit, "Evaluate", kwargs={"var": "x",
-                                                                  "s" : 1})
-    myexam.add_problem(make_chain_rule_prob, "Compute the derivative", 
-                       kwargs={"var": ["x", "y", "z"]})
-    myexam.add_problem(make_chain_rule_prob, "Compute the derivative", 
-                        kwargs={"var": ["x", "y", "z"]})
-    myexam.add_problem(make_quotient_rule_prob, "Compute the derivative", 
-                        kwargs={"var": ["x", "y", "z"]})
-    myexam.add_problem(make_horizontal_tangents, "Find all values in the domain of $f$ where horizontal tangents occur", 
-                        kwargs={"var": ["x", "y", "z"]})
-    myexam.add_problem(make_find_derivative_at_value, "Suppose $f\\left(n \\right)$, given below, is the cost for the production of $n$ items. When $n=10$, what is the marginal cost?", 
-                        kwargs={"var": ["n"], "rhs" : 10})
-    myexam.write()
+# if __name__ == "__main__":
+#
+#     myexam = Exam("algebra1", "Algebra 101 exam 1", savetex=True)
+#     myexam.add_problem(make_linear_eq, "Find all solutions")
+#     myexam.add_problem(make_rational_poly_simplify, "Simplify")
+#     myexam.add_problem(
+#         make_quadratic_eq,
+#         "Find all solutions",
+#         kwargs={"var": "x", "integer": 1}
+#     )
+#     myexam.add_problem(
+#         make_poly_ratio_limit,
+#         "Evaluate",
+#         kwargs={"var": "x", "s": 1}
+#     )
+#     myexam.add_problem(
+#         make_chain_rule_prob,
+#         "Compute the derivative",
+#         kwargs={"var": ["x", "y", "z"]}
+#     )
+#     myexam.add_problem(
+#         make_chain_rule_prob,
+#         "Compute the derivative",
+#         kwargs={"var": ["x", "y", "z"]}
+#     )
+#     myexam.add_problem(
+#         make_quotient_rule_prob,
+#         "Compute the derivative",
+#         kwargs={"var": ["x", "y", "z"]}
+#     )
+#     myexam.add_problem(
+#         make_horizontal_tangents,
+#         "Find all values in the domain of $f$ where horizontal tangents occur",
+#         kwargs={"var": ["x", "y", "z"]}
+#     )
+#     myexam.add_problem(
+#         make_find_derivative_at_value,
+#         "Suppose $f\\left(n \\right)$, given below, is the cost for the production of $n$ items. " +
+#         "When $n=10$, what is the marginal cost?",
+#         kwargs={"var": ["n"], "rhs": 10}
+#     )
+#     myexam.write()
 
 

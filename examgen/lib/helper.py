@@ -29,8 +29,13 @@ def shuffle(x):
     return x
 
 
-def get_coefficients(n, exclude=["x", "X"], first_nonzero=True, var_coeffs=False, 
-                        reduce=True):
+def get_coefficients(
+        n,
+        exclude=["x", "X"],
+        first_nonzero=True,
+        var_coeffs=False,
+        reduce=True
+):
     """
     Helper function to generate "good" coefficients for problems
     """
@@ -57,6 +62,7 @@ def get_coefficients(n, exclude=["x", "X"], first_nonzero=True, var_coeffs=False
         coeffs[0] = random.choice(selection)
     return coeffs
 
+
 def render(expr, lhs=""):
     """
     Puts $ at the beginning and end of a latex expression.
@@ -67,7 +73,3 @@ def render(expr, lhs=""):
     if lhs:
         left = "$$%s =" % lhs
     return ''.join([left, sympy.latex(expr), "$$"])
-
-
-
-

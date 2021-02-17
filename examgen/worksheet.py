@@ -3,17 +3,19 @@ from examgen.lib.docparts import doc_parts, section_parts
 from examgen.lib.algebra import make_quadratic_eq, make_linear_eq, make_rational_poly_simplify
 from examgen.lib.calc1 import make_poly_ratio_limit, make_chain_rule_prob
 
-_problems_map = {"Quadratic equations" : make_quadratic_eq,
-                 "Linear equations" : make_linear_eq,
-                 "Simplify quadratic ratio" : make_rational_poly_simplify,
-                 "Limit of polynomial ratio" : make_poly_ratio_limit}
+_problems_map = {
+    "Quadratic equations": make_quadratic_eq,
+    "Linear equations": make_linear_eq,
+    "Simplify quadratic ratio": make_rational_poly_simplify,
+    "Limit of polynomial ratio": make_poly_ratio_limit
+}
 
 
-class Document(object):
+class Document:
     """
     Small class for managing the documents and compiling them
     """
-    def __init__(self, fname, title="", savetex=False, doc_generator = doc_parts):
+    def __init__(self, fname, title="", savetex=False, doc_generator=doc_parts):
         self.savetex = savetex
         self.start, self.end = doc_generator(title)
         self.main = []
@@ -42,7 +44,7 @@ class Document(object):
             os.remove("%s.tex" % self.fname)
 
 
-class Worksheet(object):
+class Worksheet:
     """
     Class for managing an worksheet.
     """
@@ -55,8 +57,10 @@ class Worksheet(object):
 
         self.fname = fname
         self.worksheet = Document(fname, title, savetex)
-        self.solutions = Document(fname + "_solutions", title + " Solutions",
-                                  savetex)
+        self.solutions = Document(
+            fname + "_solutions", title + " Solutions",
+            savetex
+        )
 
     def add_section(self, problem_type, n, title, instructions, cols=2,
                     *args, **kwargs):
@@ -87,8 +91,8 @@ class Worksheet(object):
             p, sols = prob_generator(*args, **kwargs)
             if not isinstance(sols, list):
                 sols = [sols]
-            prob = "\item " + p
-            sols = "\item" + ', '.join(sols)
+            prob = "\\item " + p
+            sols = "\\item" + ', '.join(sols)
             s_sols.append(sols)
             s_probs.append(prob)
 
@@ -109,17 +113,35 @@ class Worksheet(object):
 if __name__ == "__main__":
 
     myworksheet = Worksheet("algebra1", "Algebra 101 worksheet 1", savetex=True)
-    myworksheet.add_section("Linear equations", 10, "Linear equations",
-                       "Solve the following equations for the specified variable.")
-    myworksheet.add_section("Simplify quadratic ratio", 10, "Simplify each expression",
-                       "")
-    myworksheet.add_section(make_quadratic_eq, 10, "Quadratic equations",
-                       "Solve the following quadratic equations.", ["x", "y", "z"])
-    myworksheet.add_section("Limit of polynomial ratio", 10, "Determine each limit",
-                       "")
-    myworksheet.add_section(make_chain_rule_prob, 10, "Evaluate",
-                       "")
+    myworksheet.add_section(
+        "Linear equations",
+        10,
+        "Linear equations",
+        "Solve the following equations for the specified variable."
+    )
+    myworksheet.add_section(
+        "Simplify quadratic ratio",
+        10,
+        "Simplify each expression",
+        ""
+    )
+    myworksheet.add_section(
+        make_quadratic_eq,
+        10,
+        "Quadratic equations",
+        "Solve the following quadratic equations.",
+        ["x", "y", "z"]
+    )
+    myworksheet.add_section(
+        "Limit of polynomial ratio",
+        10,
+        "Determine each limit",
+        ""
+    )
+    myworksheet.add_section(
+        make_chain_rule_prob,
+        10,
+        "Evaluate",
+        ""
+    )
     myworksheet.write()
-
-
-

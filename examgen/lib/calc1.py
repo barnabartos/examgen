@@ -6,32 +6,35 @@ import random
 
 from examgen.lib.helper import alpha, digits_nozero, get_coefficients, render, shuffle
 
+
 def poly1(x):
-    vals = sum([k*x**i for i,k in enumerate(reversed(get_coefficients(2)))])
+    vals = sum([k*x**i for i, k in enumerate(reversed(get_coefficients(2)))])
     return vals
+
 
 def poly2(x):
-    vals = sum([k*x**i for i,k in enumerate(reversed(get_coefficients(3)))])
+    vals = sum([k*x**i for i, k in enumerate(reversed(get_coefficients(3)))])
     return vals
+
 
 def poly3(x):
-    vals = sum([k*x**i for i,k in enumerate(reversed(get_coefficients(4)))])
+    vals = sum([k*x**i for i, k in enumerate(reversed(get_coefficients(4)))])
     return vals
-
 
 
 _functions = [sympy.sin, sympy.cos, sympy.tan, sympy.ln, sympy.sqrt, sympy.exp,
               lambda a: a, poly1, poly2, poly3]
 
-def make_find_derivative_at_value(var="x", rhs = "4"):
+
+def make_find_derivative_at_value(var="x", rhs="4"):
     F = sympy.Function("f")
     if isinstance(var, str):
         var = sympy.Symbol(var)
     elif isinstance(var, list):
         var = sympy.Symbol(random.choice(var))
-    df = sympy.prod([var - random.choice(digits_nozero) for i in xrange(random.randint(2,3))])
+    df = sympy.prod([var - random.choice(digits_nozero) for i in range(random.randint(2,3))])
     f = poly3(var)
-    df = int(sympy.diff(f, var).evalf(subs={var:int(rhs)}))
+    df = int(sympy.diff(f, var).evalf(subs={var: int(rhs)}))
 
     eq = sympy.latex(sympy.Derivative(F(rhs), var)) 
     eq = 'd'.join(eq.split("\\partial"))
@@ -45,11 +48,12 @@ def make_horizontal_tangents(var="x"):
         var = sympy.Symbol(var)
     elif isinstance(var, list):
         var = sympy.Symbol(random.choice(var))
-    df = sympy.prod([var - random.choice(digits_nozero) for i in xrange(random.randint(2,3))])
+    df = sympy.prod([var - random.choice(digits_nozero) for i in range(random.randint(2, 3))])
     f = sympy.integrate(df, var)
-    eqn = sympy.Eq(sympy.diff(f, var),0 )
+    eqn = sympy.Eq(sympy.diff(f, var), 0)
     fx = "f \\left(%s \\right)" % str(var)
     return render(f, fx), render(', '.join([str(var) + "=" + str(i) for i in sympy.solve(eqn)]))
+
 
 def make_chain_rule_prob(var="x", partial=False):
     if isinstance(var, str):
@@ -69,6 +73,7 @@ def make_chain_rule_prob(var="x", partial=False):
     eq = "$$" + eq + "$$"
     sol = "$$" + sol + "$$"
     return eq, sol
+
 
 def make_quotient_rule_prob(var="x", partial=False):
     if isinstance(var, str):
@@ -90,6 +95,7 @@ def make_quotient_rule_prob(var="x", partial=False):
     return eq, sol
 
 
+# todo: fix mutable default
 def make_poly_ratio_limit(var="x", s=[0, 1, 2]):
     """
     Generates a ratio of two polynomials, and evaluates them at infinity.
@@ -111,13 +117,13 @@ def make_poly_ratio_limit(var="x", s=[0, 1, 2]):
         var = sympy.Symbol(random.choice(var))
     if isinstance(s, list):
         s = random.choice(s)
-    if s == 2: # infinity
+    if s == 2:  # infinity
         p1 = random.randint(2, 4)
         p2 = p1-1
-    elif s == 1: # ratio of leading coefficients
+    elif s == 1:  # ratio of leading coefficients
         p1 = random.randint(2, 4)
         p2 = p1
-    elif s == 0: # zero
+    elif s == 0:  # zero
         p1 = random.randint(2, 4)
         p2 = random.randint(p1, p1 + 2)
     select = [shuffle(digits_nozero)[0]] + shuffle(range(10)[:p1-1])
@@ -127,7 +133,7 @@ def make_poly_ratio_limit(var="x", s=[0, 1, 2]):
     e = num / denom
     s = sympy.limit(e, var, sympy.oo)
 
-    e = "\lim_{x \\to \infty}" + sympy.latex(e)
+    e = "\\lim_{x \\to \\infty}" + sympy.latex(e)
     return render(e), render(s)
 
 # if __name__ == "__main__":

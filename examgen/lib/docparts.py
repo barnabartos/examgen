@@ -1,5 +1,5 @@
 def doc_parts(title="", author=""):
-    start="""
+    start = """
     \\documentclass{article}
     \\usepackage{amsfonts}
     \\usepackage{amsmath,multicol,eso-pic}
@@ -7,15 +7,16 @@ def doc_parts(title="", author=""):
     """
 
     if title:
-        start = start + "\\title{%s} \n \date{\\vspace{-5ex}} \n \maketitle" % title
+        start = start + "\\title{%s} \n \\date{\\vspace{-5ex}} \n \\maketitle" % title
 
-    end="""
-    \end{document}
+    end = """
+    \\end{document}
     """
     return start, end
 
+
 def exam_parts(title="", author=""):
-    start="""
+    start = """
     \\documentclass{exam}
     \\usepackage{amsfonts}
     \\usepackage{amsmath,multicol,eso-pic}
@@ -35,7 +36,7 @@ def exam_parts(title="", author=""):
           \\begin{tabular}{r@{\\,}l}
             Name:  & \\rule{0.5\\linewidth}{\\linethickness} \\\\[.5cm]
             Date:  & \\rule{0.5\\linewidth}{\\linethickness} \\\\
-          \end{tabular}
+          \\end{tabular}
     }}}
     \\begin{minipage}{.8\\textwidth}
     This exam includes \\numquestions\\ questions. The total number of points is \\numpoints.
@@ -43,8 +44,8 @@ def exam_parts(title="", author=""):
     \\begin{questions}
     """
 
-    end = """\end{questions}
-    \end{document}
+    end = """\\end{questions}
+    \\end{document}
     """
     return start, end
 

@@ -1,4 +1,6 @@
 import os
+from itertools import chain
+
 import sympy
 from sympy.parsing.sympy_parser import parse_expr
 from sympy.polys.polytools import degree
@@ -7,7 +9,8 @@ import random
 from examgen.lib.helper import alpha, digits_nozero, get_coefficients, render, shuffle
 
 
-def make_quadratic_eq(var="x", rhs = None, integer=[0, 1]):
+# todo fix mutable default
+def make_quadratic_eq(var="x", rhs=None, integer=[0, 1]):
     """
     Generates quadratic equation problem expression and
     set of solutions
@@ -39,7 +42,7 @@ def make_quadratic_eq(var="x", rhs = None, integer=[0, 1]):
         c1, c2, c3 = get_coefficients(3)
         lhs = c1*var**2 + c2*var + c3
 
-    if rhs == None:
+    if rhs is None:
         c4, c5, c6 = get_coefficients(3, first_nonzero=False)
         rhs = c4*var**2 + c5*var + c6
     
@@ -51,7 +54,8 @@ def make_quadratic_eq(var="x", rhs = None, integer=[0, 1]):
         return make_quadratic_eq()
     return render(e), sols
 
-def make_linear_eq(x="", rhs = None, var_coeffs=True):
+
+def make_linear_eq(x="", rhs=None, var_coeffs=True):
     """
     Generates linear equation in one variable, and its solution.
 
@@ -74,13 +78,18 @@ def make_linear_eq(x="", rhs = None, var_coeffs=True):
 
     exclude = [x.upper(), x.lower()]
     x = sympy.Symbol(x)
-    c1, c2, c3, c4 = get_coefficients(4, var_coeffs=var_coeffs, reduce=False, 
-                                      exclude = exclude)
+    c1, c2, c3, c4 = get_coefficients(
+        4,
+        var_coeffs=var_coeffs,
+        reduce=False,
+        exclude=exclude
+    )
     lhs = c1*x + c2
     rhs = c3*x + c4
     e = sympy.Eq(lhs, rhs)
     sols = [render(ex, x) for ex in sympy.solve(e, x)]
     return "Solve for $%s$ : %s" % (x, render(e)), sols
+
 
 def make_rational_poly_simplify(var="x"):
     """
@@ -101,29 +110,27 @@ def make_rational_poly_simplify(var="x"):
 
     exclude = [var.upper(), var.lower()]
     x = sympy.Symbol(var)
-    select = shuffle(range(-10,-1) + range(1,10))[:6]
+    # todo : think this through maybe
+    select = shuffle(chain(range(-10, -1), range(1, 10)))[:6]
     e1 = sympy.prod([x - i for i in shuffle(select)[:2]]).expand()
     e2 = sympy.prod([x - i for i in shuffle(select)[:2]]).expand()
     e3 = sympy.prod([x - i for i in shuffle(select)[:2]]).expand()
     e4 = sympy.prod([x - i for i in shuffle(select)[:2]]).expand()
-    L = len(set([e1, e2, e3, e4]))
+    length = len({e1, e2, e3, e4})
     e = ((e1/e2) / (e3 / e4))
     s1 = ''.join(["\\frac{", sympy.latex(e1), "}", "{", sympy.latex(e2), "}"])
     s2 = ''.join(["\\frac{", sympy.latex(e3), "}", "{", sympy.latex(e4), "}"])
     s3 = ''.join(["$$\\frac{", s1, "}", "{", s2, "}$$"])
     pieces = str(e.factor()).split("/")
+    # todo fix this asap
     try:
-        num, denom= [parse_expr(i).expand() for i in pieces]
+        num, denom = [parse_expr(i).expand() for i in pieces]
     except:
         return make_rational_poly_simplify(var)
-    if len(pieces) !=2 or L < 4 or degree(num) > 2 or  degree(denom) > 2:
+    if len(pieces) != 2 or length < 4 or degree(num) > 2 or degree(denom) > 2:
         return make_rational_poly_simplify(var)
     return s3, render(num / denom)
 
 
 # if __name__ == "__main__":
 #     print make_quadratic_eq(["x", "y"])
-
-
-
-
