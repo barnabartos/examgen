@@ -3,7 +3,7 @@ from lib import doc_parts, problem, exam_parts
 from lib import make_quadratic_eq, make_linear_eq, make_rational_poly_simplify
 from lib import make_poly_ratio_limit, make_chain_rule_prob, make_quotient_rule_prob
 from lib import make_horizontal_tangents, make_find_derivative_at_value
-from worksheet import document, _problems_map
+from worksheet import Document, _problems_map
 
 class exam(object):
     """
@@ -17,7 +17,7 @@ class exam(object):
         """
 
         self.fname = fname
-        self.exam = document(fname, title, savetex, doc_generator=exam_parts)
+        self.exam = Document(fname, title, savetex, doc_generator=exam_parts)
 
     def add_problem(self, problem_type, instructions, points=1, vspace=200,
                     args=(), kwargs={}):

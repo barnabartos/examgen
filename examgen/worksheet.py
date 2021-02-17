@@ -1,7 +1,7 @@
 import os
-from lib import doc_parts, section_parts
-from lib import make_quadratic_eq, make_linear_eq, make_rational_poly_simplify
-from lib import make_poly_ratio_limit, make_chain_rule_prob
+from examgen.lib.docparts import doc_parts, section_parts
+from examgen.lib.algebra import make_quadratic_eq, make_linear_eq, make_rational_poly_simplify
+from examgen.lib.calc1 import make_poly_ratio_limit, make_chain_rule_prob
 
 _problems_map = {"Quadratic equations" : make_quadratic_eq,
                  "Linear equations" : make_linear_eq,
@@ -9,7 +9,7 @@ _problems_map = {"Quadratic equations" : make_quadratic_eq,
                  "Limit of polynomial ratio" : make_poly_ratio_limit}
 
 
-class document(object):
+class Document(object):
     """
     Small class for managing the documents and compiling them
     """
@@ -31,9 +31,9 @@ class document(object):
         """
         main = '\n'.join(self.main)
         doc = '\n'.join([self.start, main, self.end])
-        f = open("%s.tex" % self.fname, "wb")
-        f.write(doc)
-        f.close()
+        # use format strings in refactors!
+        with open(f"{self.fname}.tex", "w") as f:
+            f.write(doc)
         os.system("pdflatex %s.tex" % self.fname)
         os.remove("%s.log" % self.fname)
         if remove_aux:
@@ -42,9 +42,7 @@ class document(object):
             os.remove("%s.tex" % self.fname)
 
 
-
-
-class worksheet(object):
+class Worksheet(object):
     """
     Class for managing an worksheet.
     """
@@ -56,8 +54,8 @@ class worksheet(object):
         """
 
         self.fname = fname
-        self.worksheet = document(fname, title, savetex)
-        self.solutions = document(fname + "_solutions", title + " Solutions",
+        self.worksheet = Document(fname, title, savetex)
+        self.solutions = Document(fname + "_solutions", title + " Solutions",
                                   savetex)
 
     def add_section(self, problem_type, n, title, instructions, cols=2,
@@ -85,7 +83,7 @@ class worksheet(object):
         start, end = section_parts(title, instructions, cols)
         sol_start, sol_end = section_parts(title, "", cols=1)
         s_probs, s_sols = [], []
-        for i in xrange(n):
+        for i in range(n):
             p, sols = prob_generator(*args, **kwargs)
             if not isinstance(sols, list):
                 sols = [sols]
@@ -110,7 +108,7 @@ class worksheet(object):
 
 if __name__ == "__main__":
 
-    myworksheet = worksheet("algebra1", "Algebra 101 worksheet 1", savetex=True)
+    myworksheet = Worksheet("algebra1", "Algebra 101 worksheet 1", savetex=True)
     myworksheet.add_section("Linear equations", 10, "Linear equations",
                        "Solve the following equations for the specified variable.")
     myworksheet.add_section("Simplify quadratic ratio", 10, "Simplify each expression",

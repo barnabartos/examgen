@@ -3,7 +3,8 @@ import sympy
 from sympy.parsing.sympy_parser import parse_expr
 from sympy.polys.polytools import degree
 import random
-from helper import alpha, digits_nozero, get_coefficients, render, shuffle
+
+from examgen.lib.helper import alpha, digits_nozero, get_coefficients, render, shuffle
 
 
 def make_quadratic_eq(var="x", rhs = None, integer=[0, 1]):
@@ -120,8 +121,8 @@ def make_rational_poly_simplify(var="x"):
     return s3, render(num / denom)
 
 
-if __name__ == "__main__":
-    print make_quadratic_eq(["x", "y"])
+# if __name__ == "__main__":
+#     print make_quadratic_eq(["x", "y"])
 
 
 

@@ -1,7 +1,8 @@
-from examgen import worksheet, make_quotient_rule_prob
+from examgen.worksheet import Worksheet
+from examgen.lib.calc1 import make_quotient_rule_prob
 
 # make an exam with a filename and title
-myexam = worksheet("algebra1", "Algebra 101 worksheet 1", savetex=True)
+myexam = Worksheet("algebra1", "Algebra 101 worksheet 1", savetex=True)
 
 # add some problem sections 
 myexam.add_section("Linear equations", 20, "Linear equations",

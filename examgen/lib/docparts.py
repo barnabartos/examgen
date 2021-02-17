@@ -1,8 +1,8 @@
 def doc_parts(title="", author=""):
     start="""
-    \documentclass{article}
-    \usepackage{amsfonts}
-    \usepackage{amsmath,multicol,eso-pic}
+    \\documentclass{article}
+    \\usepackage{amsfonts}
+    \\usepackage{amsmath,multicol,eso-pic}
     \\begin{document}
     """
 
@@ -48,7 +48,8 @@ def exam_parts(title="", author=""):
     """
     return start, end
 
-def section_parts(title, instr="", cols = 2):
+
+def section_parts(title, instr="", cols=2):
     if cols >= 2:
         section_start="""
         \\section{%s}
@@ -84,8 +85,8 @@ def problem(instructions, problem, solution, points=1):
     """ % (str(points), instructions, problem, solution)
     return code
 
-if __name__ == "__main__":
-    print problem("test", "fasd", "asdfasd", 10)
+# if __name__ == "__main__":
+#     print problem("test", "fasd", "asdfasd", 10)
 
 
 
