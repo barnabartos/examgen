@@ -1,5 +1,6 @@
 import os
 from itertools import chain
+from typing import Union, List, Optional, Tuple
 
 import sympy
 from sympy.parsing.sympy_parser import parse_expr
@@ -10,7 +11,11 @@ from examgen.lib.helper import alpha, digits_nozero, get_coefficients, render, s
 
 
 # todo fix mutable default
-def make_quadratic_eq(var="x", rhs=None, integer=[0, 1]):
+def make_quadratic_eq(
+        var: Union[str, List[str]] = "x",
+        rhs: Optional[float] = None,
+        integer: Union[int, List[int]] = [0, 1]
+) -> Tuple[str, str]:
     """
     Generates quadratic equation problem expression and
     set of solutions
@@ -27,42 +32,46 @@ def make_quadratic_eq(var="x", rhs=None, integer=[0, 1]):
               not. Default is a random selection.
     """
     if isinstance(var, str):
-        var = sympy.Symbol(var)
+        var = sympy.Symbol(name=var)
     elif isinstance(var, list):
-        var = sympy.Symbol(random.choice(var))
+        var = sympy.Symbol(name=random.choice(var))
     if isinstance(integer, list):
-        integer = random.choice(integer)
+        integer = random.choice(seq=integer)
     if integer:
-        r1 = random.choice(digits_nozero)
-        r2 = random.choice(digits_nozero)
+        r1 = random.choice(seq=digits_nozero)
+        r2 = random.choice(seq=digits_nozero)
         lhs = (var - r1) * (var - r2)
         lhs = lhs.expand()
         rhs = 0
     else:
-        c1, c2, c3 = get_coefficients(3)
+        c1, c2, c3 = get_coefficients(n=3)
         lhs = c1*var**2 + c2*var + c3
 
     if rhs is None:
-        c4, c5, c6 = get_coefficients(3, first_nonzero=False)
+        c4, c5, c6 = get_coefficients(n=3, first_nonzero=False)
         rhs = c4*var**2 + c5*var + c6
     
-    e = sympy.Eq(lhs, rhs)
+    e = sympy.Eq(lhs=lhs, rhs=rhs)
     pvar = str(var)
-    sols = ', '.join([pvar+" = " + sympy.latex(ex) for ex in sympy.solve(e, var)])
+    sols = ', '.join([pvar+" = " + sympy.latex(expr=ex) for ex in sympy.solve(e, var)])
     sols = "$$" + sols + "$$"
     if len(sols) == 0:
         return make_quadratic_eq()
     return render(e), sols
 
 
-def make_linear_eq(x="", rhs=None, var_coeffs=True):
+def make_linear_eq(
+        x: Optional[Union[str, List[str]]] = None,
+        rhs: Optional[float] = None,  # this currently just gets overwritten
+        var_coeffs: bool = True
+) -> Tuple[str, str]:
     """
     Generates linear equation in one variable, and its solution.
 
-    x : charector for the variable to be solved for. defaults to random selection
+    x : character for the variable to be solved for. defaults to random selection
         from the global list `alpha`.
                             OR
-        a list of possible charectors. A random selection will be made from them.
+        a list of possible character. A random selection will be made from them.
 
     rhs : value to set for the right-hand side. If not given, the 
           right-hand side will be a randomly generated linear expression
@@ -72,26 +81,26 @@ def make_linear_eq(x="", rhs=None, var_coeffs=True):
                  numerical coefficients.
     """
     if not x:
-        x = random.choice(alpha)
+        x = random.choice(seq=alpha)
     elif isinstance(x, list):
-        x = random.choice(x)
+        x = random.choice(seq=x)
 
     exclude = [x.upper(), x.lower()]
-    x = sympy.Symbol(x)
+    x = sympy.Symbol(name=x)
     c1, c2, c3, c4 = get_coefficients(
-        4,
+        n=4,
         var_coeffs=var_coeffs,
         reduce=False,
         exclude=exclude
     )
     lhs = c1*x + c2
     rhs = c3*x + c4
-    e = sympy.Eq(lhs, rhs)
+    e = sympy.Eq(lhs=lhs, rhs=rhs)
     sols = [render(ex, x) for ex in sympy.solve(e, x)]
     return "Solve for $%s$ : %s" % (x, render(e)), sols
 
 
-def make_rational_poly_simplify(var="x"):
+def make_rational_poly_simplify(var: str = "x") -> Tuple[str, str]:
     """
     Generates a rational expression of 4 polynomials, to be simplified.
     Example:
@@ -104,12 +113,12 @@ def make_rational_poly_simplify(var="x"):
         a list of possible charectors. A random selection will be made from them.
     """
     if not var:
-        var = random.choice(alpha)
+        var = random.choice(seq=alpha)
     elif isinstance(var, list):
-        var = random.choice(var)
+        var = random.choice(seq=var)
 
     exclude = [var.upper(), var.lower()]
-    x = sympy.Symbol(var)
+    x = sympy.Symbol(name=var)
     # todo : think this through maybe
     select = shuffle(chain(range(-10, -1), range(1, 10)))[:6]
     e1 = sympy.prod([x - i for i in shuffle(select)[:2]]).expand()

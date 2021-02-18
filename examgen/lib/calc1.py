@@ -1,23 +1,25 @@
-import os
+import random
+from typing import Union, List, Tuple
+
 import sympy
 from sympy.parsing.sympy_parser import parse_expr
 from sympy.polys.polytools import degree
-import random
+
 
 from examgen.lib.helper import alpha, digits_nozero, get_coefficients, render, shuffle
 
 
-def poly1(x):
+def poly1(x: float) -> float:
     vals = sum([k*x**i for i, k in enumerate(reversed(get_coefficients(2)))])
     return vals
 
 
-def poly2(x):
+def poly2(x: float) -> float:
     vals = sum([k*x**i for i, k in enumerate(reversed(get_coefficients(3)))])
     return vals
 
 
-def poly3(x):
+def poly3(x: float) -> float:
     vals = sum([k*x**i for i, k in enumerate(reversed(get_coefficients(4)))])
     return vals
 
@@ -26,24 +28,24 @@ _functions = [sympy.sin, sympy.cos, sympy.tan, sympy.ln, sympy.sqrt, sympy.exp,
               lambda a: a, poly1, poly2, poly3]
 
 
-def make_find_derivative_at_value(var="x", rhs="4"):
-    F = sympy.Function("f")
+def make_find_derivative_at_value(var: Union[str, List[str]] = "x", rhs: str = "4") -> Tuple[str, str]:
+    func = sympy.Function("f")
     if isinstance(var, str):
         var = sympy.Symbol(var)
     elif isinstance(var, list):
         var = sympy.Symbol(random.choice(var))
-    df = sympy.prod([var - random.choice(digits_nozero) for i in range(random.randint(2,3))])
+    df = sympy.prod([var - random.choice(digits_nozero) for i in range(random.randint(2, 3))])
     f = poly3(var)
     df = int(sympy.diff(f, var).evalf(subs={var: int(rhs)}))
 
-    eq = sympy.latex(sympy.Derivative(F(rhs), var)) 
+    eq = sympy.latex(sympy.Derivative(func(rhs), var))
     eq = 'd'.join(eq.split("\\partial"))
     eq = eq + "=" + str(df)
     fx = "f \\left(%s \\right)" % str(var)
     return render(f, fx), render(eq)
 
 
-def make_horizontal_tangents(var="x"):
+def make_horizontal_tangents(var: Union[str, List[str]] = "x") -> Tuple[str, str]:
     if isinstance(var, str):
         var = sympy.Symbol(var)
     elif isinstance(var, list):
@@ -55,7 +57,7 @@ def make_horizontal_tangents(var="x"):
     return render(f, fx), render(', '.join([str(var) + "=" + str(i) for i in sympy.solve(eqn)]))
 
 
-def make_chain_rule_prob(var="x", partial=False):
+def make_chain_rule_prob(var: Union[str, List[str]] = "x", partial: bool = False) -> Tuple[str, str]:
     if isinstance(var, str):
         var = sympy.Symbol(var)
     elif isinstance(var, list):
@@ -75,7 +77,7 @@ def make_chain_rule_prob(var="x", partial=False):
     return eq, sol
 
 
-def make_quotient_rule_prob(var="x", partial=False):
+def make_quotient_rule_prob(var:  Union[str, List[str]] = "x", partial: bool = False) -> Tuple[str, str]:
     if isinstance(var, str):
         var = sympy.Symbol(var)
     elif isinstance(var, list):
@@ -96,7 +98,7 @@ def make_quotient_rule_prob(var="x", partial=False):
 
 
 # todo: fix mutable default
-def make_poly_ratio_limit(var="x", s=[0, 1, 2]):
+def make_poly_ratio_limit(var: Union[str, List[str]] = "x", s=[0, 1, 2]) -> Tuple[str, str]:
     """
     Generates a ratio of two polynomials, and evaluates them at infinity.
 

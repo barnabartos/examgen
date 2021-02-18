@@ -1,4 +1,6 @@
 import os
+from typing import Callable, Union
+
 from examgen.lib.docparts import doc_parts, section_parts
 from examgen.lib.algebra import make_quadratic_eq, make_linear_eq, make_rational_poly_simplify
 from examgen.lib.calc1 import make_poly_ratio_limit, make_chain_rule_prob
@@ -15,19 +17,25 @@ class Document:
     """
     Small class for managing the documents and compiling them
     """
-    def __init__(self, fname, title="", savetex=False, doc_generator=doc_parts):
+    def __init__(
+            self,
+            fname: str,
+            title: str = "",
+            savetex: bool = False,
+            doc_generator: Callable = doc_parts
+    ) -> None:
         self.savetex = savetex
         self.start, self.end = doc_generator(title)
         self.main = []
         self.fname = fname
 
-    def add(self, code):
+    def add(self, code: str) -> None:
         """
         Adds new sections to the document
         """
         self.main.append(code)
 
-    def write_compile(self, remove_aux=True):
+    def write_compile(self, remove_aux: bool = True):
         """
         Writes and compiles into a pdf
         """
@@ -48,7 +56,7 @@ class Worksheet:
     """
     Class for managing an worksheet.
     """
-    def __init__(self, fname, title="", savetex=False):
+    def __init__(self, fname: str, title: str = "", savetex: bool = False) -> None:
         """
         fname : file name for the worksheet
         title : title to be placed in the worksheet
@@ -62,8 +70,15 @@ class Worksheet:
             savetex
         )
 
-    def add_section(self, problem_type, n, title, instructions, cols=2,
-                    *args, **kwargs):
+    def add_section(
+            self, problem_type: Union[Callable, str],
+            n: int,
+            title: str,
+            instructions: str,
+            cols: int = 2,
+            *args,
+            **kwargs
+    ) -> None:
         """
         Method for adding a section of problems to an worksheet & solutions.
         problem_type : name of the type of problem, which is mapped to a

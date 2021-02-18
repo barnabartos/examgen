@@ -1,7 +1,14 @@
-import sympy
+"""
+todo: refactor this whole thing
+"""
+
 import random
+from typing import List
 from string import ascii_lowercase
 from string import ascii_uppercase
+
+import sympy
+
 from copy import copy
 
 # gather up alphanumeric charectors we might want to use for variable names
@@ -23,19 +30,20 @@ digits_nozero = [i for i in range(-26, 26)]
 digits_nozero.remove(0)
 
 
-def shuffle(x):
+def shuffle(x) -> list:
+    # todo not sure about this one
     x = list(x)
     random.shuffle(x)
     return x
 
 
 def get_coefficients(
-        n,
-        exclude=["x", "X"],
-        first_nonzero=True,
-        var_coeffs=False,
-        reduce=True
-):
+        n: int,
+        exclude: List[str] = ["x", "X"],
+        first_nonzero: bool = True,
+        var_coeffs: bool = False,
+        reduce: bool = True
+) -> List[int]:
     """
     Helper function to generate "good" coefficients for problems
     """
@@ -55,7 +63,7 @@ def get_coefficients(
         c = random.choice(selection)
         if isinstance(c, str):
             c = sympy.Symbol(c)
-        if reduce and random.randint(0,1):
+        if reduce and random.randint(0, 1):
             c = 0
         coeffs.append(c)
     if first_nonzero and coeffs[0] == 0:

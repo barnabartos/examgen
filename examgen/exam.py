@@ -1,4 +1,6 @@
 import os
+from typing import Callable, Union, List, Tuple
+
 from examgen.lib.docparts import doc_parts, problem, exam_parts
 from examgen.lib.algebra import make_quadratic_eq, make_linear_eq, make_rational_poly_simplify
 from examgen.lib.calc1 import make_poly_ratio_limit, \
@@ -9,11 +11,11 @@ from examgen.lib.calc1 import make_poly_ratio_limit, \
 from examgen.worksheet import Document, _problems_map
 
 
-class Exam(object):
+class Exam:
     """
     Class for managing an exam.
     """
-    def __init__(self, fname, title="", savetex=False):
+    def __init__(self, fname: str, title: str = "", savetex: bool = False):
         """
         fname : file name for the exam
         title : title to be placed in the exam
@@ -25,13 +27,14 @@ class Exam(object):
 
     def add_problem(
             self,
-            problem_type,
-            instructions,
-            points=1,
-            vspace=200,
+            problem_type: Union[Callable, str],
+            instructions: str,
+            points: int = 1,
+            vspace: int = 200,
+            # todo fix these asap
             args=(),
             kwargs={}
-    ):
+    ) -> None:
         """
         Method for adding a section of problems to an exam & solutions.
         problem_type : name of the type of problem, which is mapped to a
@@ -47,6 +50,7 @@ class Exam(object):
         title : title text for the section
         instructions : text instructions for the section
         """
+        # todo not sure about this one
         if hasattr(problem_type, '__call__'):
             prob_generator = problem_type
         else:
@@ -58,7 +62,7 @@ class Exam(object):
         problem_code += "\\vspace{%spt}" % vspace
         self.exam.add(problem_code)
 
-    def write(self):
+    def write(self) -> None:
         self.exam.write_compile(remove_aux=False)
         self.exam.write_compile()
         self.exam.start = self.exam.start.replace("\\noprintanswers", "\\printanswers")

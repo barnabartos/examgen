@@ -1,4 +1,7 @@
-def doc_parts(title="", author=""):
+from typing import Tuple
+
+
+def doc_parts(title: str = "", author: str = "") -> Tuple[str, str]:
     start = """
     \\documentclass{article}
     \\usepackage{amsfonts}
@@ -15,7 +18,7 @@ def doc_parts(title="", author=""):
     return start, end
 
 
-def exam_parts(title="", author=""):
+def exam_parts(title: str = "", author: str = "") -> Tuple[str, str]:
     start = """
     \\documentclass{exam}
     \\usepackage{amsfonts}
@@ -50,16 +53,16 @@ def exam_parts(title="", author=""):
     return start, end
 
 
-def section_parts(title, instr="", cols=2):
+def section_parts(title: str, instr: str = "", cols: int = 2) -> Tuple[str, str]:
     if cols >= 2:
-        section_start="""
+        section_start = """
         \\section{%s}
         %s
         \\begin{multicols}{1}
         \\begin{enumerate}
         """ % (title, instr)
 
-        section_end="""
+        section_end = """
         \\end{enumerate}
         \\end{multicols}
         """
@@ -75,7 +78,7 @@ def section_parts(title, instr="", cols=2):
     return section_start, section_end
 
 
-def problem(instructions, problem, solution, points=1):
+def problem(instructions: str, problem: str, solution: str, points: int = 1) -> str:
     code = """
     \\question[%s]
         %s
