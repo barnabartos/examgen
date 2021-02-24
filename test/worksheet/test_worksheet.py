@@ -30,5 +30,7 @@ def test_example(
         fix_worksheet,
         fix_sections
 ):
-    fix_worksheet.write()
+    out = fix_worksheet.worksheet.get_string()
+    with open("hello.tex", "w") as f:
+        f.write(out)
 
