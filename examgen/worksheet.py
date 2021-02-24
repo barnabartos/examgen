@@ -1,7 +1,7 @@
 import os
 from typing import Callable, Union
 
-from examgen.lib.docparts import doc_parts, section_parts
+from examgen.lib.docparts import LatexDoc
 from examgen.lib.algebra import make_quadratic_eq, make_linear_eq, make_rational_poly_simplify
 from examgen.lib.calc1 import make_poly_ratio_limit, make_chain_rule_prob
 
@@ -11,45 +11,6 @@ _problems_map = {
     "Simplify quadratic ratio": make_rational_poly_simplify,
     "Limit of polynomial ratio": make_poly_ratio_limit
 }
-
-
-class Document:
-    """
-    Small class for managing the documents and compiling them
-    """
-    def __init__(
-            self,
-            fname: str,
-            title: str = "",
-            savetex: bool = False,
-            doc_generator: Callable = doc_parts
-    ) -> None:
-        self.savetex = savetex
-        self.start, self.end = doc_generator(title)
-        self.main = []
-        self.fname = fname
-
-    def add(self, code: str) -> None:
-        """
-        Adds new sections to the document
-        """
-        self.main.append(code)
-
-    def write_compile(self, remove_aux: bool = True):
-        """
-        Writes and compiles into a pdf
-        """
-        main = '\n'.join(self.main)
-        doc = '\n'.join([self.start, main, self.end])
-        # use format strings in refactors!
-        with open(f"{self.fname}.tex", "w") as f:
-            f.write(doc)
-        os.system("pdflatex %s.tex" % self.fname)
-        os.remove("%s.log" % self.fname)
-        if remove_aux:
-            os.remove("%s.aux" % self.fname)
-        if not self.savetex:
-            os.remove("%s.tex" % self.fname)
 
 
 class Worksheet:
@@ -62,13 +23,9 @@ class Worksheet:
         title : title to be placed in the worksheet
         savetex : flag to either save or delete the .tex files after compiling
         """
-
         self.fname = fname
-        self.worksheet = Document(fname, title, savetex)
-        self.solutions = Document(
-            fname + "_solutions", title + " Solutions",
-            savetex
-        )
+        self.worksheet = LatexDoc(title)
+        self.solutions = LatexDoc(title + " Solutions")
 
     def add_section(
             self, problem_type: Union[Callable, str],
@@ -99,8 +56,8 @@ class Worksheet:
         else:
             prob_generator = _problems_map[problem_type]
 
-        start, end = section_parts(title, instructions, cols)
-        sol_start, sol_end = section_parts(title, "", cols=1)
+        # start, end = section_parts(title, instructions, cols)
+        # sol_start, sol_end = section_parts(title, "", cols=1)
         s_probs, s_sols = [], []
         for i in range(n):
             p, sols = prob_generator(*args, **kwargs)
@@ -113,16 +70,18 @@ class Worksheet:
 
         s_probs = '\n'.join(s_probs)
         s_sols = '\n'.join(s_sols)
-        prob_code = ''.join([start, s_probs, end])
+        self.worksheet.add_section(title="problems", content=s_probs)
+        self.solutions.add_section(title="solutions", content=s_sols)
+        # prob_code = ''.join([start, s_probs, end])
 
-        sol_code = ''.join([sol_start, s_sols, sol_end])
+        # sol_code = ''.join([sol_start, s_sols, sol_end])
         
-        self.worksheet.add(prob_code)
-        self.solutions.add(sol_code)
+        # self.worksheet.add(prob_code)
+        # self.solutions.add(sol_code)
 
     def write(self):
-        self.worksheet.write_compile()
-        self.solutions.write_compile()
+        self.worksheet.generate_pdf(filepath=self.fname)
+        self.solutions.generate_pdf(filepath=f"sols_{self.fname}")
 
 
 if __name__ == "__main__":
@@ -134,29 +93,29 @@ if __name__ == "__main__":
         "Linear equations",
         "Solve the following equations for the specified variable."
     )
-    myworksheet.add_section(
-        "Simplify quadratic ratio",
-        10,
-        "Simplify each expression",
-        ""
-    )
-    myworksheet.add_section(
-        make_quadratic_eq,
-        10,
-        "Quadratic equations",
-        "Solve the following quadratic equations.",
-        ["x", "y", "z"]
-    )
-    myworksheet.add_section(
-        "Limit of polynomial ratio",
-        10,
-        "Determine each limit",
-        ""
-    )
-    myworksheet.add_section(
-        make_chain_rule_prob,
-        10,
-        "Evaluate",
-        ""
-    )
+    # myworksheet.add_section(
+    #     "Simplify quadratic ratio",
+    #     10,
+    #     "Simplify each expression",
+    #     ""
+    # )
+    # myworksheet.add_section(
+    #     make_quadratic_eq,
+    #     10,
+    #     "Quadratic equations",
+    #     "Solve the following quadratic equations.",
+    #     ["x", "y", "z"]
+    # )
+    # myworksheet.add_section(
+    #     "Limit of polynomial ratio",
+    #     10,
+    #     "Determine each limit",
+    #     ""
+    # )
+    # myworksheet.add_section(
+    #     make_chain_rule_prob,
+    #     10,
+    #     "Evaluate",
+    #     ""
+    # )
     myworksheet.write()
