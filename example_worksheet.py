@@ -1,5 +1,6 @@
 from examgen.worksheet import Worksheet
-from examgen.lib.calc1 import make_quotient_rule_prob
+from examgen.lib.calc1 import QuotientRule
+from examgen.lib.algebra import LinearEq, QuadraticEq
 
 # make an exam with a filename and title
 myexam = Worksheet(
@@ -10,21 +11,24 @@ myexam = Worksheet(
 
 # add some problem sections 
 myexam.add_section(
-    problem_type="Linear equations",
+    prob_generator=LinearEq(),
     n=20,
     title="Linear equations",
     instructions="Solve the following equations for the specified variable."
 )
 myexam.add_section(
-    problem_type="Quadratic equations",
+    prob_generator=QuadraticEq(),
     n=20,
     title="Quadratic equations",
     instructions="Solve the following quadratic equations."
 )
 
-# todo: this section is broken, examine!
-# myexam.add_section(make_quotient_rule_prob,10, "Differentiation",
-#                   "Compute each derivative", ["x", "y", "z"])
+myexam.add_section(
+    prob_generator=QuotientRule(var=["x", "y", "z"]),
+    n=10,
+    title="Differentiation",
+    instructions="Compute each derivative"
+)
 
 # generate the exam and solutions pdf
 myexam.write()

@@ -3,6 +3,8 @@
 *.egg
 *.pyc
 *.x3g
+*.idea
+/venv
 /build
 /dist
 /examgen/*.tex
