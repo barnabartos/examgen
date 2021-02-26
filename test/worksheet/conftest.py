@@ -20,6 +20,6 @@ def fix_sections(
     """adds sections for each item in request"""
     ws = Worksheet(fname="test", title="test")
     for section in request.param:
-        fix_worksheet.add_section(*section)
+        fix_worksheet.add_section(**section._asdict())
         logger.debug(f"added section {section}")
     return ws
