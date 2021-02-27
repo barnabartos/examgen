@@ -4,15 +4,14 @@ todo: refactor this whole thing
 
 import random
 from typing import List
-from string import ascii_lowercase
-from string import ascii_uppercase
+from string import ascii_letters
 
 import sympy
 
 from copy import copy
 
 # gather up alphanumeric charectors we might want to use for variable names
-alpha = [i for i in ascii_uppercase + ascii_lowercase]
+alpha = list(ascii_letters)
 # remove the ones that might be confusing in a problem
 alpha.remove("l")
 alpha.remove("o")
