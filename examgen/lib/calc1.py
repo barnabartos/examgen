@@ -6,7 +6,7 @@ from sympy.parsing.sympy_parser import parse_expr
 from sympy.polys.polytools import degree
 
 
-from examgen.lib.helper import alpha, digits_nozero, get_coefficients, render, shuffle
+from examgen.lib.constants import alpha, digits_nozero, get_coefficients, render, shuffle
 
 
 def poly1(x: float) -> float:
