@@ -53,7 +53,7 @@ class FindDervative(MathProb):
 
 
 class HorizontalTangents(MathProb):
-    def __init__(self, var):
+    def __init__(self, var="x"):
         super().__init__(var=var)
 
     def make(self) -> Tuple[str, str]:
@@ -160,6 +160,3 @@ class PolyRatioLimit(MathProb):
         e = "\\lim_{x \\to \\infty}" + sympy.latex(e)
         return render(e), render(s)
 
-
-if __name__ == "__main__":
-    print(PolyRatioLimit(var=["x", "y"]).make())
