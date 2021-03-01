@@ -144,6 +144,3 @@ class RationalPolySimplify(MathProb):
             return self.make()
         return s3, render(num / denom)
 
-
-if __name__ == "__main__":
-    print(QuadraticEq(var=["x", "y"]).make())
