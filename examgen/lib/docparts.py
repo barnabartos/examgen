@@ -38,6 +38,5 @@ class LatexDoc(Document):
         with self.create(Section(title=title)):
             if instructions:
                 self.append(instructions)
-            with self.create(Multicols(arguments=[str(cols)])):
-                with self.create(Enumerate()):
-                    self.append(NoEscape(content))
+            with self.create(Enumerate()):
+                self.append(NoEscape(content))
