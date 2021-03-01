@@ -106,7 +106,7 @@ class LinearEq(MathProb):
 
 class RationalPolySimplify(MathProb):
     def __init__(self, var: str = "x"):
-        self.var = var
+        super().__init__(var=var)
 
     def make(self):
         """
