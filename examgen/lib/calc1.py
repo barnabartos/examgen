@@ -5,7 +5,7 @@ import sympy
 from sympy.parsing.sympy_parser import parse_expr
 from sympy.polys.polytools import degree
 
-
+from examgen.lib.base_classes import MathProb
 from examgen.lib.constants import alpha, digits_nozero, get_coefficients, render, shuffle
 
 
@@ -34,66 +34,56 @@ _functions = [sympy.sin, sympy.cos, sympy.tan, sympy.ln, sympy.sqrt, sympy.exp,
 # refactoring will be needed later!
 
 
-class FindDervative:
+class FindDervative(MathProb):
     def __init__(self, var: Union[str, List[str]] = "x", rhs: str = "4"):
-        self.var = var
+        super().__init__(var=var)
         self.rhs = rhs
 
     def make(self) -> Tuple[str, str]:
         func = sympy.Function("f")
-        if isinstance(self.var, str):
-            self.var = sympy.Symbol(self.var)
-        elif isinstance(self.var, list):
-            self.var = sympy.Symbol(random.choice(self.var))
-        df = sympy.prod([self.var - random.choice(digits_nozero) for i in range(random.randint(2, 3))])
-        f = poly3(self.var)
-        df = int(sympy.diff(f, self.var).evalf(subs={self.var: int(self.rhs)}))
-
-        eq = sympy.latex(sympy.Derivative(func(self.rhs), self.var))
+        var = sympy.Symbol(self.get_variable())
+        df = sympy.prod([var - random.choice(digits_nozero) for i in range(random.randint(2, 3))])
+        f = poly3(var)
+        df = int(sympy.diff(f, var).evalf(subs={var: int(self.rhs)}))
+        eq = sympy.latex(sympy.Derivative(func(self.rhs), var))
         eq = 'd'.join(eq.split("\\partial"))
         eq = eq + "=" + str(df)
-        fx = "f \\left(%s \\right)" % str(self.var)
+        fx = "f \\left(%s \\right)" % str(var)
         return render(f, fx), render(eq)
 
 
-class HorizontalTangents:
+class HorizontalTangents(MathProb):
     def __init__(self, var):
-        self.var = var
+        super().__init__(var=var)
 
     def make(self) -> Tuple[str, str]:
-        if isinstance(self.var, str):
-            self.var = sympy.Symbol(self.var)
-        elif isinstance(self.var, list):
-            self.var = sympy.Symbol(random.choice(self.var))
-        df = sympy.prod([self.var - random.choice(digits_nozero) for i in range(random.randint(2, 3))])
-        f = sympy.integrate(df, self.var)
-        eqn = sympy.Eq(sympy.diff(f, self.var), 0)
-        fx = "f \\left(%s \\right)" % str(self.var)
-        return render(f, fx), render(', '.join([str(self.var) + "=" + str(i) for i in sympy.solve(eqn)]))
+        var = sympy.Symbol(self.get_variable())
+        df = sympy.prod([var - random.choice(digits_nozero) for i in range(random.randint(2, 3))])
+        f = sympy.integrate(df, var)
+        eqn = sympy.Eq(sympy.diff(f, var), 0)
+        fx = "f \\left(%s \\right)" % str(var)
+        return render(f, fx), render(', '.join([str(var) + "=" + str(i) for i in sympy.solve(eqn)]))
 
 
-class ChainRule:
+class ChainRule(MathProb):
     def __init__(
             self,
             var: Union[str, List[str]] = "x",
             partial: bool = False
     ):
-        self.var = var
+        super().__init__(var=var)
         self.partial = partial
 
     def make(self) -> Tuple[str, str]:
-        if isinstance(self.var, str):
-            self.var = sympy.Symbol(self.var)
-        elif isinstance(self.var, list):
-            self.var = sympy.Symbol(random.choice(self.var))
+        var = sympy.Symbol(self.get_variable())
         f1 = random.choice(_functions)
         f2 = random.choice(_functions)
         f3 = random.choice(_functions)
 
-        eq = f2(f1(self.var)) + f3(self.var)
+        eq = f2(f1(var)) + f3(var)
 
-        sol = sympy.latex(sympy.diff(eq, self.var))
-        eq = sympy.latex(sympy.Derivative(eq, self.var))
+        sol = sympy.latex(sympy.diff(eq, var))
+        eq = sympy.latex(sympy.Derivative(eq, var))
         if not self.partial:
             eq = 'd'.join(eq.split("\\partial"))
         eq = "$$" + eq + "$$"
@@ -101,24 +91,21 @@ class ChainRule:
         return eq, sol
 
 
-class QuotientRule:
+class QuotientRule(MathProb):
     def __init__(self, var: Union[str, List[str]] = "x", partial: bool = False):
-        self.var = var
+        super().__init__(var=var)
         self.partial = partial
 
     def make(self):
-        if isinstance(self.var, str):
-            self.var = sympy.Symbol(self.var)
-        elif isinstance(self.var, list):
-            self.var = sympy.Symbol(random.choice(self.var))
+        var = sympy.Symbol(self.get_variable())
         f1 = random.choice(_functions)
         f2 = random.choice(_functions)
         f3 = random.choice(_functions)
 
-        eq = (f1(self.var) + f2(self.var)) / f3(self.var)
+        eq = (f1(var) + f2(var)) / f3(var)
 
-        sol = sympy.latex(sympy.diff(eq, self.var))
-        eq = sympy.latex(sympy.Derivative(eq, self.var))
+        sol = sympy.latex(sympy.diff(eq, var))
+        eq = sympy.latex(sympy.Derivative(eq, var))
         if not self.partial:
             eq = 'd'.join(eq.split("\\partial"))
         eq = "$$" + eq + "$$"
@@ -126,9 +113,9 @@ class QuotientRule:
         return eq, sol
 
 
-class PolyRatioLimit:
+class PolyRatioLimit(MathProb):
     def __init__(self, var: Union[str, List[str]] = "x", s=None):
-        self.var = var
+        super().__init__(var=var)
         if s is not None:
             self.s = s
         else:
@@ -149,10 +136,7 @@ class PolyRatioLimit:
 
             default: one of the above is randomly selected
         """
-        if isinstance(self.var, str):
-            var = sympy.Symbol(self.var)
-        elif isinstance(self.var, list):
-            var = sympy.Symbol(random.choice(self.var))
+        var = sympy.Symbol(self.get_variable())
         if isinstance(self.s, list):
             s = random.choice(self.s)
         else:
