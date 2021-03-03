@@ -81,9 +81,6 @@ class LinearEq(MathProb):
             character for the variable to be solved for. defaults to random selection
             from the global list `alpha`. OR a list of possible character.
             A random selection will be made from them.
-        :param rhs:
-            value to set for the right-hand side. If not given, the
-            right-hand side will be a randomly generated linear expression
         todo: implement this!
         :param var_coeffs:
             sets whether we want variables as coefficients in the problem.
@@ -92,16 +89,13 @@ class LinearEq(MathProb):
 
         """
         super().__init__(var=x)
-        self.rhs = rhs
 
-    def make(self) -> Tuple[str, str]:
+    def make(self) -> Tuple[str, List[str]]:
         x = self.get_variable()
-        exclude = [x.upper(), x.lower()]
         x = sympy.Symbol(name=x)
         c1, c2, c3, c4 = self.get_coeffs(n=4, start=-26, stop=26)
         e = sympy.Eq(lhs=c1 * x + c2, rhs=c3 * x + c4)
-        sols = [render(ex, x) for ex in sympy.solve(e, x)]
-        return "Solve for $%s$ : %s" % (x, render(e)), sols
+        return sympy.latex(e), [f"$$ {x}=" + sympy.latex(i) + " $$" for i in sympy.solve(e, dict=False)]
 
 
 class RationalPolySimplify(MathProb):

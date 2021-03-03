@@ -13,7 +13,7 @@ class Worksheet:
         """
         self.fname = fname
         self.worksheet = LatexDoc(title=title)
-        self.solutions = LatexDoc(title=title + " _Solutions")
+        self.solutions = LatexDoc(title=title + " Solutions")
 
     def add_section(
             self,

@@ -3,7 +3,7 @@ from collections import namedtuple
 import pytest
 
 from examgen.lib.algebra import LinearEq, RationalPolySimplify, QuadraticEq
-from examgen.lib.calc1 import PolyRatioLimit, ChainRule
+from examgen.lib.calc1 import PolyRatioLimit, ChainRule, FindDervative, HorizontalTangents, QuotientRule
 
 worksheet_args = namedtuple("worksheet_args", ["prob_generator", "n", "cols", "title", "instructions"])
 
@@ -50,7 +50,28 @@ worksheet_args = namedtuple("worksheet_args", ["prob_generator", "n", "cols", "t
                     prob_generator=ChainRule(),
                     n=10,
                     cols=2,
-                    title="Evaluate",
+                    title="chain_rule",
+                    instructions=""
+                ),
+                worksheet_args(
+                    prob_generator=FindDervative(),
+                    n=10,
+                    cols=2,
+                    title="derivation",
+                    instructions=""
+                ),
+                worksheet_args(
+                    prob_generator=HorizontalTangents(),
+                    n=10,
+                    cols=2,
+                    title="tangents",
+                    instructions=""
+                ),
+                worksheet_args(
+                    prob_generator=QuotientRule(),
+                    n=10,
+                    cols=2,
+                    title="quotient_rule",
                     instructions=""
                 )
             ]

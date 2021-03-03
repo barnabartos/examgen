@@ -47,9 +47,9 @@ class FindDervative(MathProb):
         df = int(sympy.diff(f, var).evalf(subs={var: int(self.rhs)}))
         eq = sympy.latex(sympy.Derivative(func(self.rhs), var))
         eq = 'd'.join(eq.split("\\partial"))
-        eq = eq + "=" + str(df)
+        eq = "$$" + eq + "=" + str(df) + "$$"
         fx = "f \\left(%s \\right)" % str(var)
-        return render(f, fx), render(eq)
+        return render(f, fx), eq
 
 
 class HorizontalTangents(MathProb):
@@ -157,6 +157,5 @@ class PolyRatioLimit(MathProb):
         e = num / denom
         s = sympy.limit(e, var, sympy.oo)
 
-        e = "\\lim_{x \\to \\infty}" + sympy.latex(e)
-        return render(e), render(s)
-
+        e = "$$ \\lim_{x \\to \\infty}" + sympy.latex(e) +" $$"
+        return e, render(s)
