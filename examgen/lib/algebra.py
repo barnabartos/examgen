@@ -8,7 +8,7 @@ from sympy.polys.polytools import degree
 import random
 
 from examgen.lib.base_classes import MathProb
-from examgen.lib.constants import alpha, digits_nozero, get_coefficients, render, shuffle
+from examgen.lib.constants import alpha, digits_nozero, render, shuffle
 
 # i reimplemented the original functions naively as classes, to be initialized before
 # passing to Worksheet, eliminating the need for *args and ** quargs, while

@@ -1,31 +1,39 @@
 import random
 from typing import Union, List, Tuple
+from functools import partial
 
 import sympy
 from sympy.parsing.sympy_parser import parse_expr
 from sympy.polys.polytools import degree
 
 from examgen.lib.base_classes import MathProb
-from examgen.lib.constants import alpha, digits_nozero, get_coefficients, render, shuffle
+from examgen.lib.constants import alpha, digits_nozero, render, shuffle, logger
 
 
-def poly1(x: float) -> float:
-    vals = sum([k*x**i for i, k in enumerate(reversed(get_coefficients(2)))])
-    return vals
+def get_polynomial(n, x):
+    coeffs = []
+    for i in range(n):
+        c = random.choice(digits_nozero)
+        if random.randint(0, 1):
+            c = 0
+        coeffs.append(c)
+    if coeffs[0] == 0:
+        coeffs[0] = random.choice(digits_nozero)
+    return sum([k*x**i for i, k in enumerate(reversed(coeffs))])
 
 
-def poly2(x: float) -> float:
-    vals = sum([k*x**i for i, k in enumerate(reversed(get_coefficients(3)))])
-    return vals
-
-
-def poly3(x: float) -> float:
-    vals = sum([k*x**i for i, k in enumerate(reversed(get_coefficients(4)))])
-    return vals
-
-
-_functions = [sympy.sin, sympy.cos, sympy.tan, sympy.ln, sympy.sqrt, sympy.exp,
-              lambda a: a, poly1, poly2, poly3]
+_functions = [
+    sympy.sin,
+    sympy.cos,
+    sympy.tan,
+    sympy.ln,
+    sympy.sqrt,
+    sympy.exp,
+    lambda a: a,
+    partial(get_polynomial, 2),
+    partial(get_polynomial, 3),
+    partial(get_polynomial, 4)
+]
 
 
 # i reimplemented the original functions naively as classes, to be initialized before
@@ -43,7 +51,7 @@ class FindDervative(MathProb):
         func = sympy.Function("f")
         var = sympy.Symbol(self.get_variable())
         df = sympy.prod([var - random.choice(digits_nozero) for i in range(random.randint(2, 3))])
-        f = poly3(var)
+        f = get_polynomial(n=4, x=var)
         df = int(sympy.diff(f, var).evalf(subs={var: int(self.rhs)}))
         eq = sympy.latex(sympy.Derivative(func(self.rhs), var))
         eq = 'd'.join(eq.split("\\partial"))
@@ -121,6 +129,35 @@ class PolyRatioLimit(MathProb):
         else:
             self.s = [0, 1, 2]
 
+    def get_limit_mode(self) -> Tuple[int, int]:
+        """
+            0 : limit at infinity is zero
+            1 : limit as infinity is a nonzero finite number
+            2 : limit at infinity is either +infinity or -infinity
+            default: one of the above is randomly selected
+        """
+        if isinstance(self.s, list):
+            s = random.choice(self.s)
+            logger.debug(f"randommly setting mystery variable: s = {s}")
+        else:
+            s = self.s
+            logger.debug(f"setting mystery variable: s = {s}")
+        if s == 2:  # infinity
+            p1 = random.randint(2, 4)
+            p2 = p1 - 1
+            logger.debug(f"setting coeffs: p1 = {p1}, p2 = {p2}")
+        elif s == 1:  # ratio of leading coefficients
+            p1 = random.randint(2, 4)
+            p2 = p1
+            logger.debug(f"setting coeffs: p1 = {p1}, p2 = {p2}")
+        elif s == 0:  # zero
+            p1 = random.randint(2, 4)
+            p2 = random.randint(p1, p1 + 2)
+            logger.debug(f"setting coeffs: p1 = {p1}, p2 = {p2}")
+        else:
+            raise ValueError(f"invalid value for s: {s}")
+        return p1, p2
+
     def make(self) -> Tuple[str, str]:
         """
         Generates a ratio of two polynomials, and evaluates them at infinity.
@@ -129,33 +166,22 @@ class PolyRatioLimit(MathProb):
                                 OR
             a list of possible charectors. A random selection will be made from them.
 
-        s : selects the kind of solution
-            0 : limit at infinity is zero
-            1 : limit as infinity is a nonzero finite number
-            2 : limit at infinity is either +infinity or -infinity
-
-            default: one of the above is randomly selected
         """
         var = sympy.Symbol(self.get_variable())
-        if isinstance(self.s, list):
-            s = random.choice(self.s)
-        else:
-            s = self.s
-        if s == 2:  # infinity
-            p1 = random.randint(2, 4)
-            p2 = p1 - 1
-        elif s == 1:  # ratio of leading coefficients
-            p1 = random.randint(2, 4)
-            p2 = p1
-        elif s == 0:  # zero
-            p1 = random.randint(2, 4)
-            p2 = random.randint(p1, p1 + 2)
-        select = [shuffle(digits_nozero)[0]] + shuffle(range(10)[:p1 - 1])
-        num = sum([(k + 1) * var ** i for i, k in enumerate(select)])
-        select = [shuffle(digits_nozero)[0]] + shuffle(range(10)[:p2 - 1])
-        denom = sum([(k + 1) * var ** i for i, k in enumerate(select)])
+        p1, p2 = self.get_limit_mode()
+        num_coeffs = [
+            self.get_coeffs(n=1, start=-26, stop=26, unique=True) +
+            self.get_coeffs(n=p1-1, start=0, stop=9, unique=True, include_zero=True)
+        ]
+        num = sum([(k + 1) * var ** i for i, k in enumerate(num_coeffs)])
+        logger.debug(f"num: {num}")
+        denom_coeffs = [
+            self.get_coeffs(n=1, start=-26, stop=26, unique=True) +
+            self.get_coeffs(n=p2-1, start=0, stop=9, unique=True, include_zero=True)
+        ]
+        denom = sum([(k + 1) * var ** i for i, k in enumerate(denom_coeffs)])
+        logger.debug(f"denom: {denom}")
         e = num / denom
         s = sympy.limit(e, var, sympy.oo)
-
         e = "$$ \\lim_{x \\to \\infty}" + sympy.latex(e) +" $$"
         return e, render(s)

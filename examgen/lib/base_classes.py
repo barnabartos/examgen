@@ -29,23 +29,21 @@ class MathProb:
             start: int,
             stop: int,
             integer: Optional[bool] = True,
-            include_zero: bool = False
+            include_zero: bool = False,
+            unique: bool = False
     ) -> List[float]:
         ret = []
-        if not include_zero and start < 0 and stop > 0:
-            while len(ret) < n:
-                if integer:
-                    num = randrange(start=start, stop=stop)
-                else:
-                    num = uniform(a=start, b=stop)
-                if num != 0:
-                    ret.append(num)
-            return ret
-        else:
+        while len(ret) < n:
             if integer:
-                return [randrange(start=start, stop=stop) for i in range(n)]
+                num = randrange(start=start, stop=stop)
             else:
-                return [uniform(a=start, b=stop) for i in range(n)]
+                num = uniform(a=start, b=stop)
+            if include_zero and num == 0:
+                continue
+            if unique and num in ret:
+                continue
+            ret.append(num)
+        return ret
 
     def make(self):
         raise NotImplementedError("function make is not implemented!")

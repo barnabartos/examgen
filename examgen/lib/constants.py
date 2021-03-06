@@ -3,8 +3,10 @@ todo: refactor this whole thing
 """
 
 import random
+import logging
 from typing import List
 from string import ascii_letters
+from sys import stdout
 
 import sympy
 
@@ -29,45 +31,19 @@ digits_nozero = [i for i in range(-26, 26)]
 digits_nozero.remove(0)
 
 
+logger = logging.getLogger("examgen")
+logger.setLevel(logging.DEBUG)  # set to logging.DEBUG for more information.
+handler = logging.StreamHandler(stdout)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger.addHandler(handler)
+handler.setFormatter(formatter)
+
+
 def shuffle(x) -> list:
     # todo not sure about this one
     x = list(x)
     random.shuffle(x)
     return x
-
-
-def get_coefficients(
-        n: int,
-        exclude: List[str] = ["x", "X"],
-        first_nonzero: bool = True,
-        var_coeffs: bool = False,
-        reduce: bool = True
-) -> List[int]:
-    """
-    Helper function to generate "good" coefficients for problems
-    """
-    if var_coeffs:
-        selection = copy(digits_nozero + alpha)
-        for i in exclude:
-
-            # todo: ugly hack, please refactor asap!!!
-            try:
-                selection.remove(i)
-            except ValueError:
-                print(f"ugly hack says: no {i}  in variable list!!!")
-    else:
-        selection = digits_nozero
-    coeffs = []
-    for i in range(n):
-        c = random.choice(selection)
-        if isinstance(c, str):
-            c = sympy.Symbol(c)
-        if reduce and random.randint(0, 1):
-            c = 0
-        coeffs.append(c)
-    if first_nonzero and coeffs[0] == 0:
-        coeffs[0] = random.choice(selection)
-    return coeffs
 
 
 def render(expr, lhs=""):
