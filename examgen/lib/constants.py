@@ -4,22 +4,20 @@ todo: refactor this whole thing
 
 import random
 import logging
-from typing import List
 from string import ascii_letters
 from sys import stdout
 
 import sympy
 
-from copy import copy
 
 # gather up alphanumeric charectors we might want to use for variable names
-alpha = list(ascii_letters)
+ALPHA = list(ascii_letters)
 # remove the ones that might be confusing in a problem
-alpha.remove("l")
-alpha.remove("o")
-alpha.remove("O")
-alpha.remove("I")
-alpha.remove("i")
+ALPHA.remove("l")
+ALPHA.remove("o")
+ALPHA.remove("O")
+ALPHA.remove("I")
+ALPHA.remove("i")
 # gather up numerical digits we might want to use for coefficients
 # nothing special about -26 to 26, other than it matches the number of chars
 # above

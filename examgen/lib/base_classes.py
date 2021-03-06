@@ -3,13 +3,13 @@ from typing import Union, List, Optional
 from random import choice, randrange, uniform
 from itertools import chain
 
-from examgen.lib.constants import alpha
+from examgen.lib.constants import ALPHA
 
 
 class MathProb:
     INSTRUCTIONS = "set this to default description in children"
     TITLE = "set this to default title in children"
-    var = alpha
+    var = ALPHA
 
     def __init__(self, var: Optional[str] = None) -> None:
         if var is not None:

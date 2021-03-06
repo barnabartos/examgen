@@ -7,7 +7,7 @@ from sympy.parsing.sympy_parser import parse_expr
 from sympy.polys.polytools import degree
 
 from examgen.lib.base_classes import MathProb
-from examgen.lib.constants import alpha, digits_nozero, render, shuffle, logger
+from examgen.lib.constants import digits_nozero, render, logger
 
 
 def get_polynomial(n, x):
@@ -138,22 +138,21 @@ class PolyRatioLimit(MathProb):
         """
         if isinstance(self.s, list):
             s = random.choice(self.s)
-            logger.debug(f"randommly setting mystery variable: s = {s}")
         else:
             s = self.s
-            logger.debug(f"setting mystery variable: s = {s}")
         if s == 2:  # infinity
             p1 = random.randint(2, 4)
             p2 = p1 - 1
-            logger.debug(f"setting coeffs: p1 = {p1}, p2 = {p2}")
+            logger.debug(f"generated expression will have a limit of infinity")
         elif s == 1:  # ratio of leading coefficients
             p1 = random.randint(2, 4)
             p2 = p1
-            logger.debug(f"setting coeffs: p1 = {p1}, p2 = {p2}")
+            logger.debug(f"generated expression will have a finite limit")
         elif s == 0:  # zero
+            # todo this is buggy !!! sometimes gives nonzero results
             p1 = random.randint(2, 4)
             p2 = random.randint(p1, p1 + 2)
-            logger.debug(f"setting coeffs: p1 = {p1}, p2 = {p2}")
+            logger.debug(f"generated expression will have a limit of zero")
         else:
             raise ValueError(f"invalid value for s: {s}")
         return p1, p2
@@ -169,16 +168,12 @@ class PolyRatioLimit(MathProb):
         """
         var = sympy.Symbol(self.get_variable())
         p1, p2 = self.get_limit_mode()
-        num_coeffs = [
-            self.get_coeffs(n=1, start=-26, stop=26, unique=True) +
+        num_coeffs = self.get_coeffs(n=1, start=-26, stop=26, unique=True) + \
             self.get_coeffs(n=p1-1, start=0, stop=9, unique=True, include_zero=True)
-        ]
         num = sum([(k + 1) * var ** i for i, k in enumerate(num_coeffs)])
         logger.debug(f"num: {num}")
-        denom_coeffs = [
-            self.get_coeffs(n=1, start=-26, stop=26, unique=True) +
+        denom_coeffs = self.get_coeffs(n=1, start=-26, stop=26, unique=True) + \
             self.get_coeffs(n=p2-1, start=0, stop=9, unique=True, include_zero=True)
-        ]
         denom = sum([(k + 1) * var ** i for i, k in enumerate(denom_coeffs)])
         logger.debug(f"denom: {denom}")
         e = num / denom
