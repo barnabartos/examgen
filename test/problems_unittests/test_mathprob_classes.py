@@ -48,9 +48,44 @@ from examgen.lib import algebra, calc1
         "fix_problem_output"
     ]
 )
-def test_math_problem(
+def test_manual_eval(
     fix_problem_output
 ):
-    # todo: logging output for manual evaluation, assertions needed
+    """logs output for manual evaluation"""
     problem, solution = fix_problem_output
     logger.debug(f"problem: \n {problem}\n\nsolution:\n{solution}\n")
+
+
+@pytest.mark.parametrize(
+    argnames=["fix_problem_output", "expected_result"],
+    argvalues=[
+        (
+                calc1.PolyRatioLimit(s=0),
+                "$$0$$"
+        ),
+        # todo figure out how to use mocking to eliminate randomness
+        # (
+        #         calc1.PolyRatioLimit(s=1),
+        #         "asdf"
+        # ),
+        (
+                calc1.PolyRatioLimit(s=2),
+                "$$\infty$$"
+        )
+    ],
+    ids=[
+        "PolyRatioLimit-limZero",
+        # "PolyRatioLimit-limFinite",
+        "PolyRatioLimit-limInfinite"
+    ],
+    indirect=[
+        "fix_problem_output"
+    ]
+)
+def test_expected_solution(
+        fix_problem_output,
+        expected_result
+):
+    problem, solution = fix_problem_output
+    assert solution == expected_result, \
+        f"exercise has solution: {solution}\ninstead of expected: {expected_result}"

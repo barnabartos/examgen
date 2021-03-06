@@ -3,8 +3,6 @@ from typing import Union, List, Tuple
 from functools import partial
 
 import sympy
-from sympy.parsing.sympy_parser import parse_expr
-from sympy.polys.polytools import degree
 
 from examgen.lib.base_classes import MathProb
 from examgen.lib.constants import digits_nozero, render, logger
@@ -149,9 +147,8 @@ class PolyRatioLimit(MathProb):
             p2 = p1
             logger.debug(f"generated expression will have a finite limit")
         elif s == 0:  # zero
-            # todo this is buggy !!! sometimes gives nonzero results
             p1 = random.randint(2, 4)
-            p2 = random.randint(p1, p1 + 2)
+            p2 = random.randint(p1+1, p1 + 2)
             logger.debug(f"generated expression will have a limit of zero")
         else:
             raise ValueError(f"invalid value for s: {s}")
@@ -168,15 +165,15 @@ class PolyRatioLimit(MathProb):
         """
         var = sympy.Symbol(self.get_variable())
         p1, p2 = self.get_limit_mode()
-        num_coeffs = self.get_coeffs(n=1, start=-26, stop=26, unique=True) + \
+        num_coeffs = self.get_coeffs(n=1, start=-26, stop=26) + \
             self.get_coeffs(n=p1-1, start=0, stop=9, unique=True, include_zero=True)
         num = sum([(k + 1) * var ** i for i, k in enumerate(num_coeffs)])
-        logger.debug(f"num: {num}")
-        denom_coeffs = self.get_coeffs(n=1, start=-26, stop=26, unique=True) + \
+        denom_coeffs = self.get_coeffs(n=1, start=-26, stop=26) + \
             self.get_coeffs(n=p2-1, start=0, stop=9, unique=True, include_zero=True)
         denom = sum([(k + 1) * var ** i for i, k in enumerate(denom_coeffs)])
-        logger.debug(f"denom: {denom}")
         e = num / denom
+        logger.debug(f"generated expression: {e}")
         s = sympy.limit(e, var, sympy.oo)
+        logger.debug(f"limit of expression: {s}")
         e = "$$ \\lim_{x \\to \\infty}" + sympy.latex(e) +" $$"
         return e, render(s)
