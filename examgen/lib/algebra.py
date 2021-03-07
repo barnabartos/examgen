@@ -1,3 +1,4 @@
+import logging
 import os
 from itertools import chain
 from typing import Union, List, Optional, Tuple
@@ -8,7 +9,7 @@ from sympy.polys.polytools import degree
 import random
 
 from examgen.lib.base_classes import MathProb
-from examgen.lib.constants import render, shuffle
+from examgen.lib.constants import render, shuffle, logger
 
 # i reimplemented the original functions naively as classes, to be initialized before
 # passing to Worksheet, eliminating the need for *args and ** quargs, while
@@ -115,26 +116,18 @@ class RationalPolySimplify(MathProb):
             a list of possible charectors. A random selection will be made from them.
         """
         var = self.get_variable()
-        exclude = [var.upper(), var.lower()]
         x = sympy.Symbol(name=var)
-        # todo : think this through maybe
-        select = shuffle(chain(range(-10, -1), range(1, 10)))[:6]
-        e1 = sympy.prod([x - i for i in shuffle(select)[:2]]).expand()
-        e2 = sympy.prod([x - i for i in shuffle(select)[:2]]).expand()
-        e3 = sympy.prod([x - i for i in shuffle(select)[:2]]).expand()
-        e4 = sympy.prod([x - i for i in shuffle(select)[:2]]).expand()
-        length = len({e1, e2, e3, e4})
+        coeffs = self.get_coeffs(n=6, start=-10, stop=10, include_zero=False, unique=True)
+        brackets = [(x-i) for i in coeffs]
+        e1 = sympy.prod([brackets[0], brackets[1]]).expand()
+        e2 = sympy.prod([brackets[0], brackets[2]]).expand()
+        e3 = sympy.prod([brackets[3], brackets[4]]).expand()
+        e4 = sympy.prod([brackets[3], brackets[5]]).expand()
         e = ((e1 / e2) / (e3 / e4))
         s1 = ''.join(["\\frac{", sympy.latex(e1), "}", "{", sympy.latex(e2), "}"])
         s2 = ''.join(["\\frac{", sympy.latex(e3), "}", "{", sympy.latex(e4), "}"])
         s3 = ''.join(["$$\\frac{", s1, "}", "{", s2, "}$$"])
         pieces = str(e.factor()).split("/")
-        # todo fix this asap
-        try:
-            num, denom = [parse_expr(i).expand() for i in pieces]
-        except:
-            return self.make()
-        if len(pieces) != 2 or length < 4 or degree(num) > 2 or degree(denom) > 2:
-            return self.make()
+        num, denom = [parse_expr(i).expand() for i in pieces]
         return s3, render(num / denom)
 

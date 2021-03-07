@@ -53,7 +53,7 @@ def test_manual_eval(
 ):
     """logs output for manual evaluation"""
     problem, solution = fix_problem_output
-    logger.debug(f"problem: \n {problem}\n\nsolution:\n{solution}\n")
+    logger.debug(f"\nproblem: {problem}\nsolution: {solution}\n")
 
 
 @pytest.mark.parametrize(

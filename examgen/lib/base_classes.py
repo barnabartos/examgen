@@ -38,6 +38,7 @@ class MathProb:
                 num = randrange(start=start, stop=stop)
             else:
                 num = uniform(a=start, b=stop)
+            # todo: this seems buggy somehow
             if include_zero and num == 0:
                 continue
             if unique and num in ret:
