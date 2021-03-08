@@ -165,15 +165,18 @@ class PolyRatioLimit(MathProb):
         """
         var = sympy.Symbol(self.get_variable())
         p1, p2 = self.get_limit_mode()
-        num_coeffs = self.get_coeffs(n=1, start=-26, stop=26) + \
-            self.get_coeffs(n=p1-1, start=0, stop=9, unique=True, include_zero=True)
+        num_coeffs = self.get_coeffs(n=1, start=-26, stop=26)
+        if p1 != 1:
+            num_coeffs += self.get_coeffs(n=p1-1, start=0, stop=9, unique=True, include_zero=False)
         num = sum([(k + 1) * var ** i for i, k in enumerate(num_coeffs)])
-        denom_coeffs = self.get_coeffs(n=1, start=-26, stop=26) + \
-            self.get_coeffs(n=p2-1, start=0, stop=9, unique=True, include_zero=True)
-        denom = sum([(k + 1) * var ** i for i, k in enumerate(denom_coeffs)])
+        denom_coeffs = self.get_coeffs(n=1, start=-26, stop=26)
+        if p2 != 1:
+            denom_coeffs += self.get_coeffs(n=p2-1, start=0, stop=9, unique=True, include_zero=False)
+        denom = sum([k * var ** i for i, k in enumerate(denom_coeffs)])
         e = num / denom
-        logger.debug(f"generated expression: {e}")
+        logger.debug(f"\nnum: {num}\ndenom: {denom}")
         s = sympy.limit(e, var, sympy.oo)
         logger.debug(f"limit of expression: {s}")
         e = "$$ \\lim_{x \\to \\infty}" + sympy.latex(e) +" $$"
+        logger.debug(f"generated expression: {e}")
         return e, render(s)

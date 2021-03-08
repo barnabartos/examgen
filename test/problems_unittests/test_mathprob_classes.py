@@ -1,4 +1,5 @@
 import pytest
+import re
 
 from test.constants import logger
 from examgen.lib import algebra, calc1
@@ -61,21 +62,20 @@ def test_manual_eval(
     argvalues=[
         (
                 calc1.PolyRatioLimit(s=0),
-                "$$0$$"
+                r"^\$\$0\$\$$"
         ),
-        # todo figure out how to use mocking to eliminate randomness
-        # (
-        #         calc1.PolyRatioLimit(s=1),
-        #         "asdf"
-        # ),
+        (
+                calc1.PolyRatioLimit(s=1),
+                r"^\$\$(\\frac{[0-9]+}{[0-9]+}|[0-9]+)\$\$$"
+        ),
         (
                 calc1.PolyRatioLimit(s=2),
-                "$$\infty$$"
+                r"^\$\$-?\\infty\$\$$"
         )
     ],
     ids=[
         "PolyRatioLimit-limZero",
-        # "PolyRatioLimit-limFinite",
+        "PolyRatioLimit-limFinite",
         "PolyRatioLimit-limInfinite"
     ],
     indirect=[
@@ -87,5 +87,6 @@ def test_expected_solution(
         expected_result
 ):
     problem, solution = fix_problem_output
-    assert solution == expected_result, \
+    expr = re.compile(expected_result)
+    assert re.match(pattern=expr, string=solution), \
         f"exercise has solution: {solution}\ninstead of expected: {expected_result}"

@@ -61,13 +61,10 @@ class QuadraticEq(MathProb):
             c4, c5, c6 = self.get_coeffs(n=3, start=-26, stop=26)
             rhs = c4 * var ** 2 + c5 * var + c6
 
-        e = sympy.Eq(lhs=lhs, rhs=self.rhs)
+        e = sympy.Eq(lhs=lhs, rhs=self.rhs if self.rhs is not None else 0)
         pvar = str(var)
         sols = ', '.join([pvar + " = " + sympy.latex(expr=ex) for ex in sympy.solve(e, var)])
         sols = "$$" + sols + "$$"
-        if len(sols) == 0:
-            # todo is this the best way to do this?
-            return self.make()
         return render(e), sols
 
 
