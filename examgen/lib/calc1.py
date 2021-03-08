@@ -41,7 +41,7 @@ _functions = [
 
 
 class FindDervative(MathProb):
-    def __init__(self, var: Union[str, List[str]] = "x", rhs: str = "4"):
+    def __init__(self, var: str = "x", rhs: str = "4"):
         super().__init__(var=var)
         self.rhs = rhs
 
@@ -59,7 +59,7 @@ class FindDervative(MathProb):
 
 
 class HorizontalTangents(MathProb):
-    def __init__(self, var="x"):
+    def __init__(self, var: str = "x"):
         super().__init__(var=var)
 
     def make(self) -> Tuple[str, str]:
@@ -74,7 +74,7 @@ class HorizontalTangents(MathProb):
 class ChainRule(MathProb):
     def __init__(
             self,
-            var: Union[str, List[str]] = "x",
+            var: str = "x",
             partial: bool = False
     ):
         super().__init__(var=var)
@@ -98,7 +98,7 @@ class ChainRule(MathProb):
 
 
 class QuotientRule(MathProb):
-    def __init__(self, var: Union[str, List[str]] = "x", partial: bool = False):
+    def __init__(self, var: str = "x", partial: bool = False):
         super().__init__(var=var)
         self.partial = partial
 
@@ -120,7 +120,7 @@ class QuotientRule(MathProb):
 
 
 class PolyRatioLimit(MathProb):
-    def __init__(self, var: Union[str, List[str]] = "x", s=None):
+    def __init__(self, var: str = "x", s=None):
         super().__init__(var=var)
         if s is not None:
             self.s = s

@@ -14,6 +14,8 @@ class MathProb:
 
     def __init__(self, var: Optional[str] = None) -> None:
         if var is not None:
+            if type(var) != str:
+                raise TypeError("var has to be a string")
             if var == "":
                 raise ValueError("var should not be an empty string")
             self.var = var

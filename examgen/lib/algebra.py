@@ -20,7 +20,7 @@ from examgen.lib.constants import render, shuffle, logger
 class QuadraticEq(MathProb):
     def __init__(
             self,
-            var: Union[str, List[str]] = "x",
+            var: str = "x",
             rhs: Optional[float] = None,
             integer: Union[int, List[int]] = None
     ):
@@ -71,11 +71,11 @@ class QuadraticEq(MathProb):
 class LinearEq(MathProb):
     def __init__(
             self,
-            x: Optional[Union[str, List[str]]] = None,
+            var: str = None,
             rhs: Optional[float] = None,  # this currently just gets overwritten
     ):
         """
-        :param x:
+        :param var:
             character for the variable to be solved for. defaults to random selection
             from the global list `alpha`. OR a list of possible character.
             A random selection will be made from them.
@@ -86,7 +86,7 @@ class LinearEq(MathProb):
             numerical coefficients.
 
         """
-        super().__init__(var=x)
+        super().__init__(var=var)
 
     def make(self) -> Tuple[str, List[str]]:
         x = self.get_variable()

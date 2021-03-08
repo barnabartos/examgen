@@ -21,3 +21,14 @@ def test_get_coeffs():
         mathprob.get_coeffs(n=-1, start=10, stop=20)
     with pytest.raises(ValueError):
         mathprob.get_coeffs(n=1, start=10, stop=-10)
+
+
+def test_init():
+
+    mathprob = MathProb(var="x")
+    assert mathprob.get_variable() == "x", "get_variable returned the wrong letter"
+
+    with pytest.raises(TypeError):
+        MathProb(var=["a", "b"])
+    with pytest.raises(ValueError):
+        MathProb(var="")
