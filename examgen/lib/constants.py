@@ -52,5 +52,5 @@ def render(expr, lhs=""):
     """
     left = "$$"
     if lhs:
-        left = "$$%s =" % lhs
+        left = f"$${lhs} ="
     return ''.join([left, sympy.latex(expr), "$$"])

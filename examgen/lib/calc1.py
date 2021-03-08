@@ -47,14 +47,16 @@ class FindDervative(MathProb):
 
     def make(self) -> Tuple[str, str]:
         func = sympy.Function("f")
-        var = sympy.Symbol(self.get_variable())
-        df = sympy.prod([var - random.choice(digits_nozero) for i in range(random.randint(2, 3))])
-        f = get_polynomial(n=4, x=var)
-        df = int(sympy.diff(f, var).evalf(subs={var: int(self.rhs)}))
-        eq = sympy.latex(sympy.Derivative(func(self.rhs), var))
+        var_string = self.get_variable()
+        var = sympy.Symbol(var_string)
+        f = sympy.prod([var - i for i in self.get_coeffs(n=random.randint(2, 3), start=-10, stop=10)]).expand()
+        df = sympy.diff(f, var)
+        eq = sympy.latex(sympy.Derivative(func(), var))
+        logger.debug(eq)
         eq = 'd'.join(eq.split("\\partial"))
-        eq = "$$" + eq + "=" + str(df) + "$$"
-        fx = "f \\left(%s \\right)" % str(var)
+        logger.debug(eq)
+        eq = "$$" + eq + "=" + sympy.latex(df) + "$$"
+        fx = f"f \\left({var_string} \\right)"
         return render(f, fx), eq
 
 

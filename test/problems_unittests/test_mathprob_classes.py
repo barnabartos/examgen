@@ -8,7 +8,6 @@ from examgen.lib import algebra, calc1
 @pytest.mark.parametrize(
     argnames=["fix_problem_output"],
     argvalues=[
-        # todo: sort this out when expected functionality is more clear!
         (
                 [algebra.LinearEq()]
         ),
@@ -58,22 +57,73 @@ def test_manual_eval(
 
 
 @pytest.mark.parametrize(
-    argnames=["fix_problem_output", "expected_result"],
+    argnames=[
+        "fix_problem_output",
+        "expected_problem",
+        "expected_solution"
+    ],
     argvalues=[
         (
+                algebra.LinearEq(var="x"),
+                r"^\$\$.+=.+\$\$$",
+                r"^\$\$x=-?([0-9]+|\\frac{[0-9]+}{[0-9]+})\$\$$"
+        ),
+        (
+                algebra.QuadraticEq(var="x"),
+                r"^\$\$.+=0\$\$$",
+                r"^\$\$x=-?.+,x=-?.+\$\$$"
+        ),
+        (
+                algebra.RationalPolySimplify(var="x"),
+                r"^\$\$\\frac{\\frac{.+}{.+}}{\\frac{.+}{.+}}\$\$$",
+                r"^\$\$\\frac{.+}{.+}\$\$$"
+        ),
+        (
+                calc1.FindDervative(),
+                r"^\$\$f\\left\(x\\right\)=.+\$\$$",
+                r"^\$\$\\frac{d}{dx}f{\\left\(\\right\)}=.+\$\$$"
+        ),
+        (
+                calc1.HorizontalTangents(),
+                r"^\$\$f\\left\(x\\right\)=.+\$\$$",
+                r"^\$\$\\mathtt{\\text{.+}}\$\$$"
+        ),
+        (
+                # todo: this is quite weak
+                calc1.ChainRule(),
+                r"^\$\$\\frac{d}{dx}.+\$\$$",
+                r"^\$\$.+\$\$$"
+        ),
+        (
+                # todo: this is quite weak
+                calc1.QuotientRule(),
+                r"^\$\$\\frac{d}{dx}.+\$\$$",
+                r"^\$\$.+\$\$$"
+        ),
+        (
                 calc1.PolyRatioLimit(s=0),
+                r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
                 r"^\$\$0\$\$$"
         ),
         (
                 calc1.PolyRatioLimit(s=1),
+                r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
                 r"^\$\$(\\frac{[0-9]+}{[0-9]+}|[0-9]+)\$\$$"
         ),
         (
                 calc1.PolyRatioLimit(s=2),
+                r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
                 r"^\$\$-?\\infty\$\$$"
         )
     ],
     ids=[
+        "LinearEq",
+        "QuadraticEq",
+        "RationalPolySimplify",
+        "FindDerivative",
+        "HorizontalTangents",
+        "ChainRule",
+        "QuotientRule",
         "PolyRatioLimit-limZero",
         "PolyRatioLimit-limFinite",
         "PolyRatioLimit-limInfinite"
@@ -84,9 +134,15 @@ def test_manual_eval(
 )
 def test_expected_solution(
         fix_problem_output,
-        expected_result
+        expected_problem,
+        expected_solution
 ):
     problem, solution = fix_problem_output
-    expr = re.compile(expected_result)
-    assert re.match(pattern=expr, string=solution), \
-        f"exercise has solution: {solution}\ninstead of expected: {expected_result}"
+    problem = problem.replace(" ", "")
+    solution = solution.replace(" ", "")
+    prob = re.compile(expected_problem)
+    sol = re.compile(expected_solution)
+    assert re.match(pattern=prob, string=problem), \
+        f"\nproblem: {problem} \ndoesn't match expected pattern: {prob}"
+    assert re.match(pattern=sol, string=solution), \
+        f"\nsolution: {solution} \ndoesn't match expected pattern: {sol}"

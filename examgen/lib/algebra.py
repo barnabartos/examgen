@@ -1,15 +1,11 @@
-import logging
-import os
-from itertools import chain
 from typing import Union, List, Optional, Tuple
 
 import sympy
 from sympy.parsing.sympy_parser import parse_expr
-from sympy.polys.polytools import degree
 import random
 
 from examgen.lib.base_classes import MathProb
-from examgen.lib.constants import render, shuffle, logger
+from examgen.lib.constants import render
 
 # i reimplemented the original functions naively as classes, to be initialized before
 # passing to Worksheet, eliminating the need for *args and ** quargs, while
@@ -28,6 +24,7 @@ class QuadraticEq(MathProb):
         :param var:
             charector for the variable to be solved for. defaults to "x", OR
             a list of possible charectors. A random selection will be made from them.
+        todo: implement this later, removing now for simplicity
         :param rhs:
             value to set for the right-hand side. If not given, the
             right-hand side will be a randomly generated polynomial expression
@@ -52,16 +49,11 @@ class QuadraticEq(MathProb):
             r1, r2 = self.get_coeffs(n=2, start=-26, stop=26)
             lhs = (var - r1) * (var - r2)
             lhs = lhs.expand()
-            rhs = 0
         else:
-            c1, c2, c3 = self.get_coeffs(n=3, start=-26, stop=26)
+            # todo: limiting it for exactly 2 radicals for now
+            c1, c2, c3 = self.get_coeffs(n=3, start=-26, stop=26, unique=True)
             lhs = c1 * var ** 2 + c2 * var + c3
-
-        if self.rhs is None:
-            c4, c5, c6 = self.get_coeffs(n=3, start=-26, stop=26)
-            rhs = c4 * var ** 2 + c5 * var + c6
-
-        e = sympy.Eq(lhs=lhs, rhs=self.rhs if self.rhs is not None else 0)
+        e = sympy.Eq(lhs=lhs, rhs=0)
         pvar = str(var)
         sols = ', '.join([pvar + " = " + sympy.latex(expr=ex) for ex in sympy.solve(e, var)])
         sols = "$$" + sols + "$$"
@@ -89,11 +81,14 @@ class LinearEq(MathProb):
         super().__init__(var=var)
 
     def make(self) -> Tuple[str, List[str]]:
+        # todo: for consistent behavior, i am limiting this to exactly 1 solution.
+        # todo: implement no solution / infinite solution / parametrized later!
         x = self.get_variable()
         x = sympy.Symbol(name=x)
-        c1, c2, c3, c4 = self.get_coeffs(n=4, start=-26, stop=26)
+        c1, c2, c3, c4 = self.get_coeffs(n=4, start=-26, stop=26, unique=True)
         e = sympy.Eq(lhs=c1 * x + c2, rhs=c3 * x + c4)
-        return sympy.latex(e), [f"$$ {x}=" + sympy.latex(i) + " $$" for i in sympy.solve(e, dict=False)]
+        sol = sympy.solve(e, dict=False)
+        return "$$" + sympy.latex(e) + "$$", f"$$ {x}=" + sympy.latex(sol[0]) + "$$"
 
 
 class RationalPolySimplify(MathProb):
@@ -127,4 +122,3 @@ class RationalPolySimplify(MathProb):
         pieces = str(e.factor()).split("/")
         num, denom = [parse_expr(i).expand() for i in pieces]
         return s3, render(num / denom)
-
