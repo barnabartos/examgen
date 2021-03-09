@@ -2,7 +2,7 @@ import pytest
 import re
 
 from test.constants import logger
-from examgen.lib import algebra, calc1
+from examgen.lib import algebra, calc
 
 
 @pytest.mark.parametrize(
@@ -18,19 +18,19 @@ from examgen.lib import algebra, calc1
                 [algebra.RationalPolySimplify()]
         ),
         (
-                [calc1.FindDervative()]
+                [calc.FindDerivative()]
         ),
         (
-                [calc1.PolyRatioLimit()]
+                [calc.PolyRatioLimit()]
         ),
         (
-                [calc1.QuotientRule()]
+                [calc.QuotientRule()]
         ),
         (
-                [calc1.ChainRule()]
+                [calc.ChainRule()]
         ),
         (
-                [calc1.HorizontalTangents()]
+                [calc.HorizontalTangents()]
         )
 
     ],
@@ -80,39 +80,39 @@ def test_manual_eval(
                 r"^\$\$\\frac{.+}{.+}\$\$$"
         ),
         (
-                calc1.FindDervative(),
+                calc.FindDerivative(),
                 r"^\$\$f\\left\(x\\right\)=.+\$\$$",
                 r"^\$\$\\frac{d}{dx}f{\\left\(\\right\)}=.+\$\$$"
         ),
         (
-                calc1.HorizontalTangents(),
+                calc.HorizontalTangents(),
                 r"^\$\$f\\left\(x\\right\)=.+\$\$$",
                 r"^\$\$\\mathtt{\\text{.+}}\$\$$"
         ),
         (
                 # todo: this is quite weak
-                calc1.ChainRule(),
+                calc.ChainRule(),
                 r"^\$\$\\frac{d}{dx}.+\$\$$",
                 r"^\$\$.+\$\$$"
         ),
         (
                 # todo: this is quite weak
-                calc1.QuotientRule(),
+                calc.QuotientRule(),
                 r"^\$\$\\frac{d}{dx}.+\$\$$",
                 r"^\$\$.+\$\$$"
         ),
         (
-                calc1.PolyRatioLimit(s=0),
+                calc.PolyRatioLimit(s=0),
                 r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
                 r"^\$\$0\$\$$"
         ),
         (
-                calc1.PolyRatioLimit(s=1),
+                calc.PolyRatioLimit(s=1),
                 r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
                 r"^\$\$(\\frac{[0-9]+}{[0-9]+}|[0-9]+)\$\$$"
         ),
         (
-                calc1.PolyRatioLimit(s=2),
+                calc.PolyRatioLimit(s=2),
                 r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
                 r"^\$\$-?\\infty\$\$$"
         )

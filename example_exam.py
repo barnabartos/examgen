@@ -1,7 +1,7 @@
 from examgen.worksheet import Worksheet
-from examgen.lib.calc1 import QuotientRule, \
+from examgen.lib.calc import QuotientRule, \
     ChainRule, \
-    FindDervative, \
+    FindDerivative, \
     HorizontalTangents, \
     PolyRatioLimit
 from examgen.lib.algebra import LinearEq, QuadraticEq, RationalPolySimplify
@@ -41,7 +41,7 @@ myexam.add_section(
     instructions=""
 )
 myexam.add_section(
-    prob_generator=FindDervative(var="xyz"),
+    prob_generator=FindDerivative(var="xyz"),
     n=10,
     title="Compute the derivative",
     instructions=""

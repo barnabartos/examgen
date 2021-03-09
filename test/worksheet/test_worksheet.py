@@ -3,10 +3,10 @@ from collections import namedtuple
 import pytest
 
 from examgen.lib.algebra import LinearEq, RationalPolySimplify, QuadraticEq
-from examgen.lib.calc1 import PolyRatioLimit, \
+from examgen.lib.calc import PolyRatioLimit, \
     HorizontalTangents, \
     ChainRule, \
-    FindDervative, \
+    FindDerivative, \
     HorizontalTangents, \
     QuotientRule
 
@@ -59,7 +59,7 @@ worksheet_args = namedtuple("worksheet_args", ["prob_generator", "n", "cols", "t
                     instructions=""
                 ),
                 worksheet_args(
-                    prob_generator=FindDervative(),
+                    prob_generator=FindDerivative(),
                     n=10,
                     cols=2,
                     title="derivation",

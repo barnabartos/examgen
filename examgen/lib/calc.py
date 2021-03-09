@@ -40,7 +40,7 @@ _functions = [
 # refactoring will be needed later!
 
 
-class FindDervative(MathProb):
+class FindDerivative(MathProb):
     def __init__(self, var: str = "x", rhs: str = "4"):
         super().__init__(var=var)
         self.rhs = rhs
@@ -168,12 +168,12 @@ class PolyRatioLimit(MathProb):
         var = sympy.Symbol(self.get_variable())
         p1, p2 = self.get_limit_mode()
         # this is so that the fraction doesnt cancel to 1
-        leading_coeffs = self.get_coeffs(n=2, start=-26, stop=26, unique=True)
-        num_coeffs = [leading_coeffs[0]]
+        last_coeffs = self.get_coeffs(n=2, start=-26, stop=26, unique=True)
+        num_coeffs = [last_coeffs[0]]
         if p1 != 1:
             num_coeffs += self.get_coeffs(n=p1-1, start=0, stop=9, unique=True, include_zero=False)
         num = sum([k * var ** i for i, k in enumerate(num_coeffs)])
-        denom_coeffs = [leading_coeffs[1]]
+        denom_coeffs = [last_coeffs[1]]
         if p2 != 1:
             denom_coeffs += self.get_coeffs(n=p2-1, start=0, stop=9, unique=True, include_zero=False)
         denom = sum([k * var ** i for i, k in enumerate(denom_coeffs)])
