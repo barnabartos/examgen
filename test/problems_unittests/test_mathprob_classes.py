@@ -63,53 +63,53 @@ def test_manual_eval(
         "expected_solution"
     ],
     argvalues=[
-        (
-                algebra.LinearEq(var="x"),
-                r"^\$\$.+=.+\$\$$",
-                r"^\$\$x=-?([0-9]+|\\frac{[0-9]+}{[0-9]+})\$\$$"
-        ),
-        (
-                algebra.QuadraticEq(var="x"),
-                r"^\$\$.+=0\$\$$",
-                r"^\$\$x=-?.+,x=-?.+\$\$$"
-        ),
-        (
-                algebra.RationalPolySimplify(var="x"),
-                r"^\$\$\\frac{\\frac{.+}{.+}}{\\frac{.+}{.+}}\$\$$",
-                r"^\$\$\\frac{.+}{.+}\$\$$"
-        ),
-        (
-                calc1.FindDervative(),
-                r"^\$\$f\\left\(x\\right\)=.+\$\$$",
-                r"^\$\$\\frac{d}{dx}f{\\left\(\\right\)}=.+\$\$$"
-        ),
-        (
-                calc1.HorizontalTangents(),
-                r"^\$\$f\\left\(x\\right\)=.+\$\$$",
-                r"^\$\$\\mathtt{\\text{.+}}\$\$$"
-        ),
-        (
-                # todo: this is quite weak
-                calc1.ChainRule(),
-                r"^\$\$\\frac{d}{dx}.+\$\$$",
-                r"^\$\$.+\$\$$"
-        ),
-        (
-                # todo: this is quite weak
-                calc1.QuotientRule(),
-                r"^\$\$\\frac{d}{dx}.+\$\$$",
-                r"^\$\$.+\$\$$"
-        ),
-        (
-                calc1.PolyRatioLimit(s=0),
-                r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
-                r"^\$\$0\$\$$"
-        ),
-        (
-                calc1.PolyRatioLimit(s=1),
-                r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
-                r"^\$\$(\\frac{[0-9]+}{[0-9]+}|[0-9]+)\$\$$"
-        ),
+        # (
+        #         algebra.LinearEq(var="x"),
+        #         r"^\$\$.+=.+\$\$$",
+        #         r"^\$\$x=-?([0-9]+|\\frac{[0-9]+}{[0-9]+})\$\$$"
+        # ),
+        # (
+        #         algebra.QuadraticEq(var="x"),
+        #         r"^\$\$.+=0\$\$$",
+        #         r"^\$\$x=-?.+,x=-?.+\$\$$"
+        # ),
+        # (
+        #         algebra.RationalPolySimplify(var="x"),
+        #         r"^\$\$\\frac{\\frac{.+}{.+}}{\\frac{.+}{.+}}\$\$$",
+        #         r"^\$\$\\frac{.+}{.+}\$\$$"
+        # ),
+        # (
+        #         calc1.FindDervative(),
+        #         r"^\$\$f\\left\(x\\right\)=.+\$\$$",
+        #         r"^\$\$\\frac{d}{dx}f{\\left\(\\right\)}=.+\$\$$"
+        # ),
+        # (
+        #         calc1.HorizontalTangents(),
+        #         r"^\$\$f\\left\(x\\right\)=.+\$\$$",
+        #         r"^\$\$\\mathtt{\\text{.+}}\$\$$"
+        # ),
+        # (
+        #         # todo: this is quite weak
+        #         calc1.ChainRule(),
+        #         r"^\$\$\\frac{d}{dx}.+\$\$$",
+        #         r"^\$\$.+\$\$$"
+        # ),
+        # (
+        #         # todo: this is quite weak
+        #         calc1.QuotientRule(),
+        #         r"^\$\$\\frac{d}{dx}.+\$\$$",
+        #         r"^\$\$.+\$\$$"
+        # ),
+        # (
+        #         calc1.PolyRatioLimit(s=0),
+        #         r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
+        #         r"^\$\$0\$\$$"
+        # ),
+        # (
+        #         calc1.PolyRatioLimit(s=1),
+        #         r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
+        #         r"^\$\$(\\frac{[0-9]+}{[0-9]+}|[0-9]+)\$\$$"
+        # ),
         (
                 calc1.PolyRatioLimit(s=2),
                 r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
@@ -117,15 +117,15 @@ def test_manual_eval(
         )
     ],
     ids=[
-        "LinearEq",
-        "QuadraticEq",
-        "RationalPolySimplify",
-        "FindDerivative",
-        "HorizontalTangents",
-        "ChainRule",
-        "QuotientRule",
-        "PolyRatioLimit-limZero",
-        "PolyRatioLimit-limFinite",
+        # "LinearEq",
+        # "QuadraticEq",
+        # "RationalPolySimplify",
+        # "FindDerivative",
+        # "HorizontalTangents",
+        # "ChainRule",
+        # "QuotientRule",
+        # "PolyRatioLimit-limZero",
+        # "PolyRatioLimit-limFinite",
         "PolyRatioLimit-limInfinite"
     ],
     indirect=[

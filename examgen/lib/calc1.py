@@ -1,5 +1,5 @@
 import random
-from typing import Union, List, Tuple
+from typing import Tuple
 from functools import partial
 
 import sympy
@@ -141,8 +141,8 @@ class PolyRatioLimit(MathProb):
         else:
             s = self.s
         if s == 2:  # infinity
-            p1 = random.randint(2, 4)
-            p2 = p1 - 1
+            p2 = random.randint(2, 4)
+            p1 = p2 + 1
             logger.debug(f"generated expression will have a limit of infinity")
         elif s == 1:  # ratio of leading coefficients
             p1 = random.randint(2, 4)
