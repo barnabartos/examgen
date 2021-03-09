@@ -52,9 +52,7 @@ class FindDerivative(MathProb):
         f = sympy.prod([var - i for i in self.get_coeffs(n=random.randint(2, 3), start=-10, stop=10)]).expand()
         df = sympy.diff(f, var)
         eq = sympy.latex(sympy.Derivative(func(), var))
-        logger.debug(eq)
         eq = 'd'.join(eq.split("\\partial"))
-        logger.debug(eq)
         eq = "$$" + eq + "=" + sympy.latex(df) + "$$"
         fx = f"f \\left({var_string} \\right)"
         return render(f, fx), eq
@@ -178,7 +176,6 @@ class PolyRatioLimit(MathProb):
             denom_coeffs += self.get_coeffs(n=p2-1, start=0, stop=9, unique=True, include_zero=False)
         denom = sum([k * var ** i for i, k in enumerate(denom_coeffs)])
         e = num / denom
-        logger.debug(f"\nnum: {num}\ndenom: {denom}")
         s = sympy.limit(e, var, sympy.oo)
         logger.debug(f"limit of expression: {s}")
         e = "$$ \\lim_{x \\to \\infty}" + sympy.latex(e) +" $$"

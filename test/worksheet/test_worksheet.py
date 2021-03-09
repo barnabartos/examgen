@@ -16,10 +16,6 @@ worksheet_args = namedtuple("worksheet_args", ["prob_generator", "n", "cols", "t
 @pytest.mark.parametrize(
     argnames=["fix_worksheet", "fix_sections"],
     argvalues=[
-        # (
-        #         ["empty", "this is an empty worksheet"],
-        #         []
-        # ),
         (
             ["full_worksheet", "Algebra 101 worksheet 1"],
             [
@@ -83,8 +79,6 @@ worksheet_args = namedtuple("worksheet_args", ["prob_generator", "n", "cols", "t
         )
     ],
     ids=[
-        "empty_worksheet"
-        # "second_run",
         "multichapter worksheet"
     ],
     indirect=[
