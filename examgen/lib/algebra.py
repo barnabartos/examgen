@@ -1,4 +1,5 @@
 from typing import Union, List, Optional, Tuple
+from math import floor
 
 import sympy
 from sympy.parsing.sympy_parser import parse_expr
@@ -46,13 +47,13 @@ class QuadraticEq(MathProb):
             self.integer = random.choice(seq=self.integer)
         if self.integer:
             # limits are arbitrary, this is what previous code used
-            r1, r2 = self.get_coeffs(n=2, start=-26, stop=26)
+            r1, r2 = self.get_coeffs(n=2, start=-26, stop=26, unique=True)
             lhs = (var - r1) * (var - r2)
             lhs = lhs.expand()
         else:
             # todo: limiting it for exactly 2 radicals for now
-            c1, c2, c3 = self.get_coeffs(n=3, start=-26, stop=26, unique=True)
-            lhs = c1 * var ** 2 + c2 * var + c3
+            c1, c2 = self.get_coeffs(n=2, start=-26, stop=26, unique=True)
+            lhs = c1 * var ** 2 + c2 * var + floor(c2**2/(4*c1))-1
         e = sympy.Eq(lhs=lhs, rhs=0)
         pvar = str(var)
         sols = ', '.join([pvar + " = " + sympy.latex(expr=ex) for ex in sympy.solve(e, var)])

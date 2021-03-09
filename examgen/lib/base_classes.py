@@ -52,8 +52,11 @@ class MathProb:
                 num = uniform(a=start, b=stop)
             if not include_zero and num == 0:
                 continue
-            if unique and num in ret:
-                continue
+            if unique:
+                if num in ret:
+                    continue
+                if start < 0 and -num in ret:
+                    continue
             ret.append(num)
         return ret
 
