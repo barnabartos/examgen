@@ -1,14 +1,63 @@
-from examgen import worksheet, make_quotient_rule_prob
+from examgen.worksheet import Worksheet
+from examgen.lib.calc import QuotientRule, \
+    ChainRule, \
+    FindDerivative, \
+    HorizontalTangents, \
+    PolyRatioLimit
+from examgen.lib.algebra import LinearEq, QuadraticEq, RationalPolySimplify
 
 # make an exam with a filename and title
-myexam = worksheet("algebra1", "Algebra 101 worksheet 1", savetex=True)
+myexam = Worksheet("example_worksheet", "Example worksheet 1", savetex=True)
 
 # add some problem sections 
-myexam.add_section("Linear equations", 20, "Linear equations",
-                   "Solve the following equations for the specified variable.")
-myexam.add_section("Quadratic equations", 20, "Quadratic equations",
-                   "Solve the following quadratic equations.")
-myexam.add_section(make_quotient_rule_prob,10, "Compute the derivative", ["x", "y", "z"])
+myexam.add_section(
+    prob_generator=LinearEq(var="xyz"),
+    n=20,
+    title="Linear equations",
+    instructions="Solve the following equations for the specified variable."
+)
+myexam.add_section(
+    prob_generator=QuadraticEq(var="xyz"),
+    n=20,
+    title="Quadratic equations",
+    instructions="Solve the following quadratic equations."
+)
+myexam.add_section(
+    prob_generator=RationalPolySimplify(var="xyz"),
+    n=5,
+    title="simplify the expressions",
+    instructions=""
+)
+myexam.add_section(
+    prob_generator=QuotientRule(var="xyz"),
+    n=10,
+    title="Compute the derivative",
+    instructions=""
+)
+myexam.add_section(
+    prob_generator=ChainRule(var="xyz"),
+    n=10,
+    title="Compute the derivative",
+    instructions=""
+)
+myexam.add_section(
+    prob_generator=FindDerivative(var="xyz"),
+    n=10,
+    title="Compute the derivative",
+    instructions=""
+)
+myexam.add_section(
+    prob_generator=PolyRatioLimit(var="xyz"),
+    n=10,
+    title="Find the limit",
+    instructions=""
+)
+myexam.add_section(
+    prob_generator=HorizontalTangents(var="xyz"),
+    n=10,
+    title="asdf",
+    instructions=""
+)
 
 # generate the exam and solutions pdf
 myexam.write()
