@@ -34,31 +34,31 @@ _functions = [
 ]
 
 
-# i reimplemented the original functions naively as classes, to be initialized before
-# passing to Worksheet, eliminating the need for *args and ** quargs, while
-# changing the least things possible. a principled
-# refactoring will be needed later!
-
-
 class FindDerivative(MathProb):
+    title = "Derivation of Polynomials"
+    instructions = "find the derivative of the following polynomials"
+
     def __init__(self, var: str = "x", rhs: str = "4"):
         super().__init__(var=var)
         self.rhs = rhs
 
     def make(self) -> Tuple[str, str]:
         func = sympy.Function("f")
-        var_string = self.get_variable()
-        var = sympy.Symbol(var_string)
+        var = sympy.Symbol(self.get_variable())
         f = sympy.prod([var - i for i in self.get_coeffs(n=random.randint(2, 3), start=-10, stop=10)]).expand()
         df = sympy.diff(f, var)
         eq = sympy.latex(sympy.Derivative(func(), var))
-        eq = 'd'.join(eq.split("\\partial"))
-        eq = "$$" + eq + "=" + sympy.latex(df) + "$$"
-        fx = f"f \\left({var_string} \\right)"
-        return render(f, fx), eq
+        eq = r'd'.join(eq.split(r"\partial"))
+        eq = eq + "=" + sympy.latex(df)
+        fx = fr"f \left({var} \right)={sympy.latex(f)}"
+        # todo: f() in answer instead of f(x)
+        return fx, eq
 
 
 class HorizontalTangents(MathProb):
+    title = "Horizontal Tangents"
+    instructions = "Calculate the tangents"
+
     def __init__(self, var: str = "x"):
         super().__init__(var=var)
 
@@ -67,11 +67,14 @@ class HorizontalTangents(MathProb):
         df = sympy.prod([var - random.choice(digits_nozero) for i in range(random.randint(2, 3))])
         f = sympy.integrate(df, var)
         eqn = sympy.Eq(sympy.diff(f, var), 0)
-        fx = "f \\left(%s \\right)" % str(var)
-        return render(f, fx), render(', '.join([str(var) + "=" + str(i) for i in sympy.solve(eqn)]))
+        fx = fr"f\left({var.name}\right)={sympy.latex(f)}"
+        return fx, ', '.join([str(var) + "=" + str(i) for i in sympy.solve(eqn)])
 
 
 class ChainRule(MathProb):
+    title = "Differentiation - Chain Rule"
+    instructions = "calculate the derivatives of the following expressions"
+
     def __init__(
             self,
             var: str = "x",
@@ -85,19 +88,19 @@ class ChainRule(MathProb):
         f1 = random.choice(_functions)
         f2 = random.choice(_functions)
         f3 = random.choice(_functions)
-
         eq = f2(f1(var)) + f3(var)
-
         sol = sympy.latex(sympy.diff(eq, var))
         eq = sympy.latex(sympy.Derivative(eq, var))
+        # todo: what is this all about
         if not self.partial:
-            eq = 'd'.join(eq.split("\\partial"))
-        eq = "$$" + eq + "$$"
-        sol = "$$" + sol + "$$"
+            eq = r'd'.join(eq.split(r"\partial"))
         return eq, sol
 
 
 class QuotientRule(MathProb):
+    title = "Differentiation - Quotient Rule"
+    instructions = "calculate the derivatives of the following expressions"
+
     def __init__(self, var: str = "x", partial: bool = False):
         super().__init__(var=var)
         self.partial = partial
@@ -107,19 +110,18 @@ class QuotientRule(MathProb):
         f1 = random.choice(_functions)
         f2 = random.choice(_functions)
         f3 = random.choice(_functions)
-
         eq = (f1(var) + f2(var)) / f3(var)
-
         sol = sympy.latex(sympy.diff(eq, var))
         eq = sympy.latex(sympy.Derivative(eq, var))
         if not self.partial:
-            eq = 'd'.join(eq.split("\\partial"))
-        eq = "$$" + eq + "$$"
-        sol = "$$" + sol + "$$"
+            eq = r'd'.join(eq.split(r"\partial"))
         return eq, sol
 
 
 class PolyRatioLimit(MathProb):
+    title = "Limits"
+    instructions = "calculate the limits of the following expressions"
+
     def __init__(self, var: str = "x", s=None):
         super().__init__(var=var)
         if s is not None:
@@ -177,7 +179,5 @@ class PolyRatioLimit(MathProb):
         denom = sum([k * var ** i for i, k in enumerate(denom_coeffs)])
         e = num / denom
         s = sympy.limit(e, var, sympy.oo)
-        logger.debug(f"limit of expression: {s}")
-        e = "$$ \\lim_{x \\to \\infty}" + sympy.latex(e) +" $$"
-        logger.debug(f"generated expression: {e}")
-        return e, render(s)
+        e = r"\lim_{x \to \infty}" + sympy.latex(e)
+        return e, sympy.latex(s)

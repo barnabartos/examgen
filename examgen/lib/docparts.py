@@ -34,9 +34,10 @@ class LatexDoc(Document):
         self.preamble.append(Command("title", NoEscape(title)))
         self.append(NoEscape(r"\maketitle"))
 
-    def add_section(self, title: str, content: str, cols: Optional[int] = 2, instructions: Optional[str] = None):
-        with self.create(Section(title=title)):
-            if instructions:
-                self.append(instructions)
+    def add_section(self, chapter):
+        with self.create(Section(title=chapter["title"])):
+            if chapter["main"]["description"] is not None:
+                self.append(chapter["main"]["description"])
             with self.create(Enumerate()):
-                self.append(NoEscape(content))
+                for eq in chapter["main"]["equations"]:
+                    self.append(NoEscape(r"\item $$" + eq + "$$"))

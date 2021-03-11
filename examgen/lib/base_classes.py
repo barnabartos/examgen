@@ -1,4 +1,5 @@
 import logging
+import random
 from typing import List, Optional
 from random import choice, randrange, uniform
 from datetime import datetime, timedelta
@@ -7,12 +8,15 @@ from examgen.lib.constants import ALPHA, logger
 
 
 class MathProb:
-    INSTRUCTIONS = "set this to default description in children"
-    TITLE = "set this to default title in children"
+    instructions = "set this to default description in children"
+    title = "set this to default title in children"
+
     var = ALPHA
     TIMEOUT = timedelta(seconds=5)
 
     def __init__(self, var: Optional[str] = None) -> None:
+        self.problems = []
+        self.solutions = []
         if var is not None:
             if type(var) != str:
                 raise TypeError("var has to be a string")
@@ -25,6 +29,12 @@ class MathProb:
             return choice(self.var)
         else:
             return self.var
+
+    def shuffle(self):
+        # todo investigate performance!
+        temp = list(zip(self.problems, self.solutions))
+        random.shuffle(temp)
+        self.problems, self.solutions = zip(*temp)
 
     def get_coeffs(
             self,
@@ -60,12 +70,29 @@ class MathProb:
             ret.append(num)
         return ret
 
-    def make(self):
-        raise NotImplementedError("function make is not implemented!")
+    def add_problem(self, n: int):
+        raise NotImplementedError("function add_problem is not implemented!")
 
     # def from_json(self):
     #     raise NotImplementedError
     #
-    # def to_json(self):
-    #     raise NotImplementedError
+    def to_json(self):
+        return [
+            {
+                "title": self.title,
+                "main": {
+                    "description": self.instructions,
+                    "equations": self.problems
+                },
+                "footer": None
+            },
+            {
+                "title": self.title,
+                "main": {
+                    "description": None,
+                    "equations": self.solutions
+                },
+                "footer": None
+            }
 
+        ]
