@@ -3,18 +3,11 @@ from typing import List, Tuple
 import pytest
 
 from test.constants import logger
+from examgen.lib.base_classes import MathProb
 
 
 @pytest.fixture()
-def fix_problem_output(request) -> List[str]:
-    """creates a Worksheet object"""
-    prob = request.param
-    logger.debug(f" calling make on {prob}")
-    return prob.make()
-
-
-@pytest.fixture()
-def fix_problem_object(request) -> List[str]:
+def fix_problem_object(request) -> MathProb:
     """creates a Worksheet object"""
     return request.param
 
@@ -22,7 +15,7 @@ def fix_problem_object(request) -> List[str]:
 @pytest.fixture()
 def fix_problem_method(
         request,
-        fix_problem_object
+        fix_problem_object: MathProb
 ) -> Tuple[str]:
     """creates a Worksheet object"""
     logger.debug(f"recieved object {fix_problem_object}")

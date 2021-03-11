@@ -1,12 +1,15 @@
 import pytest
 import re
 
+from jsonschema import validate
+
 from test.constants import logger
 from examgen.lib import algebra, calc
+from examgen.lib.schema import chapter
 
 
 @pytest.mark.parametrize(
-    argnames=["fix_problem_output"],
+    argnames=["fix_problem_object"],
     argvalues=[
         (
                 [algebra.LinearEq()]
@@ -45,16 +48,18 @@ from examgen.lib import algebra, calc
         "horizontal_tangents"
     ],
     indirect=[
-        "fix_problem_output"
+        "fix_problem_object"
     ]
 )
-@pytest.mark.skip("use for manual testing")
-def test_manual_eval(
-    fix_problem_output
+def test_output_schema(
+    fix_problem_object
 ):
     """logs output for manual evaluation"""
-    problem, solution = fix_problem_output
-    logger.debug(f"\nproblem: {problem}\nsolution: {solution}\n")
+    problem, solution = fix_problem_object.to_json()
+    logger.debug(problem)
+    logger.debug(solution)
+    validate(instance=problem, schema=chapter)
+    validate(instance=solution, schema=chapter)
 
 
 @pytest.mark.parametrize(
