@@ -59,67 +59,85 @@ def test_manual_eval(
 
 @pytest.mark.parametrize(
     argnames=[
-        "fix_problem_output",
+        "fix_problem_object",
+        "fix_problem_method",
         "expected_problem",
         "expected_solution"
     ],
     argvalues=[
         (
                 algebra.LinearEq(var="x"),
-                r"^\$\$.+=.+\$\$$",
-                r"^\$\$x=-?([0-9]+|\\frac{[0-9]+}{[0-9]+})\$\$$"
+                ("add_problem", [1]),
+                r"^.+=.+$",
+                r"^x=-?([0-9]+|\\frac{[0-9]+}{[0-9]+})$"
         ),
         (
                 algebra.QuadraticEq(var="x"),
-                r"^\$\$.+=0\$\$$",
-                r"^\$\$x=-?.+,x=-?.+\$\$$"
+                ("add_integer_radicals", [1]),
+                r"^.+=0$",
+                r"^x=-?.+,x=-?.+$"
+        ),
+        (
+                algebra.QuadraticEq(var="x"),
+                ("add_real_radicals", [1]),
+                r"^.+=0$",
+                r"^x=-?.+,x=-?.+$"
         ),
         (
                 algebra.RationalPolySimplify(var="x"),
-                r"^\$\$\\frac{\\frac{.+}{.+}}{\\frac{.+}{.+}}\$\$$",
-                r"^\$\$\\frac{.+}{.+}\$\$$"
+                ("add_problem", [1]),
+                r"^\\frac{\\frac{.+}{.+}}{\\frac{.+}{.+}}$",
+                r"^\\frac{.+}{.+}$"
         ),
         (
                 calc.FindDerivative(),
-                r"^\$\$f\\left\(x\\right\)=.+\$\$$",
-                r"^\$\$\\frac{d}{dx}f{\\left\(\\right\)}=.+\$\$$"
+                ("add_problem", [1]),
+                r"^f\\left\(x\\right\)=.+$",
+                r"^\\frac{d}{dx}f{\\left\(\\right\)}=.+$"
         ),
         (
                 calc.HorizontalTangents(),
-                r"^\$\$f\\left\(x\\right\)=.+\$\$$",
-                r"^\$\$\\mathtt{\\text{.+}}\$\$$"
+                ("add_problem", [1]),
+                r"^f\\left\(x\\right\)=.+$",
+                r"^.+$"
         ),
         (
                 # todo: this is quite weak
                 calc.ChainRule(),
-                r"^\$\$\\frac{d}{dx}.+\$\$$",
-                r"^\$\$.+\$\$$"
+                ("add_problem", [1]),
+                r"^\\frac{d}{dx}.+$",
+                r"^.+$"
         ),
         (
                 # todo: this is quite weak
                 calc.QuotientRule(),
-                r"^\$\$\\frac{d}{dx}.+\$\$$",
-                r"^\$\$.+\$\$$"
+                ("add_problem", [1]),
+                r"^\\frac{d}{dx}.+$",
+                r"^.+$"
         ),
         (
                 calc.PolyRatioLimit(s=0),
-                r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
-                r"^\$\$0\$\$$"
+                ("add_problem", [1]),
+                r"^\\lim_{x\\to\\infty}\\frac{.+}{.+}$",
+                r"^0$"
         ),
         (
                 calc.PolyRatioLimit(s=1),
-                r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
-                r"^\$\$(\\frac{[0-9]+}{[0-9]+}|[0-9]+)\$\$$"
+                ("add_problem", [1]),
+                r"^\\lim_{x\\to\\infty}\\frac{.+}{.+}$",
+                r"^(\\frac{[0-9]+}{[0-9]+}|[0-9]+)$"
         ),
         (
                 calc.PolyRatioLimit(s=2),
-                r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
-                r"^\$\$-?\\infty\$\$$"
+                ("add_problem", [1]),
+                r"^\\lim_{x\\to\\infty}\\frac{.+}{.+}$",
+                r"^-?\\infty$"
         )
     ],
     ids=[
         "LinearEq",
-        "QuadraticEq",
+        "QuadraticEq-add_integer_radicals",
+        "QuadraticEq-add_real_radicals",
         "RationalPolySimplify",
         "FindDerivative",
         "HorizontalTangents",
@@ -130,15 +148,16 @@ def test_manual_eval(
         "PolyRatioLimit-limInfinite"
     ],
     indirect=[
-        "fix_problem_output"
+        "fix_problem_object",
+        "fix_problem_method"
     ]
 )
 def test_expected_solution(
-        fix_problem_output,
+        fix_problem_method,
         expected_problem,
         expected_solution
 ):
-    problem, solution = fix_problem_output
+    problem, solution = fix_problem_method
     problem = problem.replace(" ", "")
     solution = solution.replace(" ", "")
     prob = re.compile(expected_problem)

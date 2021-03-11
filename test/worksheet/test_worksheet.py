@@ -1,94 +1,50 @@
-from collections import namedtuple
-
-import pytest
-
+from examgen.worksheet import Worksheet
 from examgen.lib.algebra import LinearEq, RationalPolySimplify, QuadraticEq
 from examgen.lib.calc import PolyRatioLimit, \
-    HorizontalTangents, \
     ChainRule, \
     FindDerivative, \
     HorizontalTangents, \
     QuotientRule
 
-worksheet_args = namedtuple("worksheet_args", ["prob_generator", "n", "cols", "title", "instructions"])
 
+def test_example():
+    ws = Worksheet("example_worksheet", "Example worksheet 1", savetex=True)
 
-@pytest.mark.parametrize(
-    argnames=["fix_worksheet", "fix_sections"],
-    argvalues=[
-        (
-            ["full_worksheet", "Algebra 101 worksheet 1"],
-            [
-                worksheet_args(
-                    prob_generator=LinearEq(),
-                    n=10,
-                    cols=2,
-                    title="Linear equations",
-                    instructions="Solve the following equations for the specified variable."
-                ),
-                worksheet_args(
-                    prob_generator=RationalPolySimplify(),
-                    n=10,
-                    cols=1,
-                    title="Simplify each expression",
-                    instructions=""
-                ),
-                worksheet_args(
-                    prob_generator=QuadraticEq(var="xyz"),
-                    n=10,
-                    cols=2,
-                    title="Quadratic equations",
-                    instructions="Solve the following quadratic equations.",
-                ),
-                worksheet_args(
-                    prob_generator=PolyRatioLimit(),
-                    n=10,
-                    cols=2,
-                    title="Determine each limit",
-                    instructions=""
-                ),
-                worksheet_args(
-                    prob_generator=ChainRule(),
-                    n=10,
-                    cols=2,
-                    title="chain_rule",
-                    instructions=""
-                ),
-                worksheet_args(
-                    prob_generator=FindDerivative(),
-                    n=10,
-                    cols=2,
-                    title="derivation",
-                    instructions=""
-                ),
-                worksheet_args(
-                    prob_generator=HorizontalTangents(),
-                    n=10,
-                    cols=2,
-                    title="tangents",
-                    instructions=""
-                ),
-                worksheet_args(
-                    prob_generator=QuotientRule(),
-                    n=10,
-                    cols=2,
-                    title="quotient_rule",
-                    instructions=""
-                )
-            ]
-        )
-    ],
-    ids=[
-        "multichapter worksheet"
-    ],
-    indirect=[
-        "fix_worksheet",
-        "fix_sections"
-    ]
-)
-def test_example(
-        fix_worksheet,
-        fix_sections
-):
-    fix_worksheet.write()
+    lin = LinearEq(var="A")
+    lin.add_problem(n=4)
+
+    quad = QuadraticEq(var="B")
+    quad.add_integer_radicals(n=2)
+    quad.add_real_radicals(n=2)
+    quad.shuffle()
+
+    poly = RationalPolySimplify(var="C")
+    poly.add_problem(n=4)
+
+    der1 = FindDerivative(var="D")
+    der1.add_problem(n=4)
+
+    der2 = ChainRule(var="E")
+    der2.add_problem(n=4)
+
+    der3 = QuotientRule(var="F")
+    der3.add_problem(n=4)
+
+    tangents = HorizontalTangents(var="G")
+    tangents.add_problem(n=4)
+
+    limit = PolyRatioLimit(var="H")
+    limit.add_problem(n=4)
+
+    ws.add_section(prob_generator=lin)
+    ws.add_section(prob_generator=quad)
+    ws.add_section(prob_generator=poly)
+    ws.add_section(prob_generator=der1)
+    ws.add_section(prob_generator=der2)
+    ws.add_section(prob_generator=der3)
+    ws.add_section(prob_generator=tangents)
+    ws.add_section(prob_generator=limit)
+    ws.write()
+    # generate the exam and solutions pdf
+    ws.write()
 
