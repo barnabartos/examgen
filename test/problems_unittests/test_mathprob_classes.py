@@ -1,38 +1,24 @@
 import pytest
 import re
 
+from jsonschema import validate
+
 from test.constants import logger
 from examgen.lib import algebra, calc
+from examgen.lib.schema import chapter
 
 
 @pytest.mark.parametrize(
-    argnames=["fix_problem_output"],
+    argnames="fix_problem_object",
     argvalues=[
-        (
-                [algebra.LinearEq()]
-        ),
-        (
-                [algebra.QuadraticEq()]
-        ),
-        (
-                [algebra.RationalPolySimplify()]
-        ),
-        (
-                [calc.FindDerivative()]
-        ),
-        (
-                [calc.PolyRatioLimit()]
-        ),
-        (
-                [calc.QuotientRule()]
-        ),
-        (
-                [calc.ChainRule()]
-        ),
-        (
-                [calc.HorizontalTangents()]
-        )
-
+        (algebra.LinearEq, {"var": "x"}),
+        (algebra.QuadraticEq, {}),
+        (algebra.RationalPolySimplify, {"var": "x"}),
+        (calc.FindDerivative, {}),
+        (calc.PolyRatioLimit, {}),
+        (calc.QuotientRule, {}),
+        (calc.ChainRule, {}),
+        (calc.HorizontalTangents, {})
     ],
     ids=[
         "linear_equation",
@@ -45,81 +31,105 @@ from examgen.lib import algebra, calc
         "horizontal_tangents"
     ],
     indirect=[
-        "fix_problem_output"
+        "fix_problem_object"
     ]
 )
-@pytest.mark.skip("use for manual testing")
-def test_manual_eval(
-    fix_problem_output
+def test_output_schema(
+    fix_problem_object
 ):
     """logs output for manual evaluation"""
-    problem, solution = fix_problem_output
-    logger.debug(f"\nproblem: {problem}\nsolution: {solution}\n")
+    problem, solution = fix_problem_object.to_json()
+    logger.debug(problem)
+    logger.debug(solution)
+    validate(instance=problem, schema=chapter)
+    validate(instance=solution, schema=chapter)
 
 
 @pytest.mark.parametrize(
     argnames=[
-        "fix_problem_output",
+        "fix_problem_object",
+        "fix_problem_method",
         "expected_problem",
         "expected_solution"
     ],
     argvalues=[
         (
-                algebra.LinearEq(var="x"),
-                r"^\$\$.+=.+\$\$$",
-                r"^\$\$x=-?([0-9]+|\\frac{[0-9]+}{[0-9]+})\$\$$"
+                (algebra.LinearEq, {"var": "x"}),
+                ("add_problem", [1]),
+                r"^(\+?-?([0-9]+)?x?)+=(\+?-?([0-9]+)?x?)+$",
+                r"^x=-?([0-9]+|\\frac{[0-9]+}{[0-9]+})$"
         ),
         (
-                algebra.QuadraticEq(var="x"),
-                r"^\$\$.+=0\$\$$",
-                r"^\$\$x=-?.+,x=-?.+\$\$$"
+                (algebra.QuadraticEq, {}),
+                ("add_integer_radicals", [1]),
+                r"^-?([0-9]+)?x\^\{2\}\+?-?([0-9]+)?x\+?-?([0-9]+)?=0$",
+                r"^x=-?[0-9]+,x=-?[0-9]+$"
         ),
         (
-                algebra.RationalPolySimplify(var="x"),
-                r"^\$\$\\frac{\\frac{.+}{.+}}{\\frac{.+}{.+}}\$\$$",
-                r"^\$\$\\frac{.+}{.+}\$\$$"
+                (algebra.QuadraticEq, {}),
+                ("add_real_radicals", [1]),
+                r"^-?([0-9]+)?x\^\{2\}\+?-?([0-9]+)?x\+?-?([0-9]+)?=0$",
+                r"^x=(-?\+?([0-9]|\\sqrt{[0-9]+}))+,x=(-?\+?([0-9]|\\sqrt{[0-9]+}))+$"
         ),
         (
-                calc.FindDerivative(),
-                r"^\$\$f\\left\(x\\right\)=.+\$\$$",
-                r"^\$\$\\frac{d}{dx}f{\\left\(\\right\)}=.+\$\$$"
+                (algebra.RationalPolySimplify, {"var": "x"}),
+                ("add_problem", [1]),
+                r"^\\frac{\\frac{-?([0-9]+)?x\^\{2\}\+?-?([0-9]+)?x\+?-?([0-9]+)?}" +
+                r"{-?([0-9]+)?x\^\{2\}\+?-?([0-9]+)?x\+?-?([0-9]+)?}}" +
+                r"{\\frac{-?([0-9]+)?x\^\{2\}\+?-?([0-9]+)?x\+?-?([0-9]+)?}" +
+                r"{-?([0-9]+)?x\^\{2\}\+?-?([0-9]+)?x\+?-?([0-9]+)?}}$",
+                r"^\\frac{-?([0-9]+)?x\^\{2\}\+?-?([0-9]+)?x\+?-?([0-9]+)?}" +
+                r"{-?([0-9]+)?x\^\{2\}\+?-?([0-9]+)?x\+?-?([0-9]+)?}$"
         ),
         (
-                calc.HorizontalTangents(),
-                r"^\$\$f\\left\(x\\right\)=.+\$\$$",
-                r"^\$\$\\mathtt{\\text{.+}}\$\$$"
+                (calc.FindDerivative, {}),
+                ("add_problem", [1]),
+                r"^f\\left\(x\\right\)=.+$",
+                r"^\\frac{d}{dx}f{\\left\(\\right\)}=.+$"
+        ),
+        (
+                (calc.HorizontalTangents, {}),
+                ("add_problem", [1]),
+                r"^f\\left\(x\\right\)=.+$",
+                r"^.+$"
         ),
         (
                 # todo: this is quite weak
-                calc.ChainRule(),
-                r"^\$\$\\frac{d}{dx}.+\$\$$",
-                r"^\$\$.+\$\$$"
+                (calc.ChainRule, {}),
+                ("add_problem", [1]),
+                r"^\\frac{d}{dx}.+$",
+                r"^.+$"
         ),
         (
                 # todo: this is quite weak
-                calc.QuotientRule(),
-                r"^\$\$\\frac{d}{dx}.+\$\$$",
-                r"^\$\$.+\$\$$"
+                (calc.QuotientRule, {}),
+                ("add_problem", [1]),
+                r"^\\frac{d}{dx}.+$",
+                r"^.+$"
         ),
         (
-                calc.PolyRatioLimit(s=0),
-                r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
-                r"^\$\$0\$\$$"
+                (calc.PolyRatioLimit, {"s": 0}),
+                ("add_problem", [1]),
+                r"^\\lim_{x\\to\\infty}\\frac{.+}{.+}$",
+                r"^0$"
         ),
         (
-                calc.PolyRatioLimit(s=1),
-                r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
-                r"^\$\$(\\frac{[0-9]+}{[0-9]+}|[0-9]+)\$\$$"
+                (calc.PolyRatioLimit, {"s": 1}),
+                ("add_problem", [1]),
+                r"^\\lim_{x\\to\\infty}\\frac{.+}{.+}$",
+                r"^(\\frac{[0-9]+}{[0-9]+}|[0-9]+)$"
         ),
         (
-                calc.PolyRatioLimit(s=2),
-                r"^\$\$\\lim_{x\\to\\infty}\\frac{.+}{.+}\$\$$",
-                r"^\$\$-?\\infty\$\$$"
+                (calc.PolyRatioLimit, {"s": 2}),
+                ("add_problem", [1]),
+                r"^\\lim_{x\\to\\infty}\\frac{.+}{.+}$",
+                r"^-?\\infty$"
         )
     ],
     ids=[
         "LinearEq",
-        "QuadraticEq",
+        "QuadraticEq-add_integer_radicals",
+        "QuadraticEq-add_real_radicals",
         "RationalPolySimplify",
         "FindDerivative",
         "HorizontalTangents",
@@ -130,15 +140,16 @@ def test_manual_eval(
         "PolyRatioLimit-limInfinite"
     ],
     indirect=[
-        "fix_problem_output"
+        "fix_problem_object",
+        "fix_problem_method"
     ]
 )
 def test_expected_solution(
-        fix_problem_output,
+        fix_problem_method,
         expected_problem,
         expected_solution
 ):
-    problem, solution = fix_problem_output
+    problem, solution = fix_problem_method
     problem = problem.replace(" ", "")
     solution = solution.replace(" ", "")
     prob = re.compile(expected_problem)

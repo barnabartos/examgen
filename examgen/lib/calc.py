@@ -34,44 +34,55 @@ _functions = [
 ]
 
 
-# i reimplemented the original functions naively as classes, to be initialized before
-# passing to Worksheet, eliminating the need for *args and ** quargs, while
-# changing the least things possible. a principled
-# refactoring will be needed later!
-
-
 class FindDerivative(MathProb):
+    title = "Derivation of Polynomials"
+    instructions = "find the derivative of the following polynomials"
+
     def __init__(self, var: str = "x", rhs: str = "4"):
         super().__init__(var=var)
         self.rhs = rhs
 
-    def make(self) -> Tuple[str, str]:
-        func = sympy.Function("f")
-        var_string = self.get_variable()
-        var = sympy.Symbol(var_string)
-        f = sympy.prod([var - i for i in self.get_coeffs(n=random.randint(2, 3), start=-10, stop=10)]).expand()
-        df = sympy.diff(f, var)
-        eq = sympy.latex(sympy.Derivative(func(), var))
-        eq = 'd'.join(eq.split("\\partial"))
-        eq = "$$" + eq + "=" + sympy.latex(df) + "$$"
-        fx = f"f \\left({var_string} \\right)"
-        return render(f, fx), eq
+    def add_problem(self, n: int):
+        for i in range(n):
+            func = sympy.Function("f")
+            var = sympy.Symbol(self.get_variable())
+            f = sympy.prod(
+                [var - i for i in self.get_coeffs(n=random.randint(2, 3), start=-10, stop=10, unique=True)]
+            ).expand()
+            df = sympy.diff(f, var)
+            eq = sympy.latex(sympy.Derivative(func(), var))
+            eq = r'd'.join(eq.split(r"\partial"))
+            eq = eq + "=" + sympy.latex(df)
+            fx = fr"f \left({var} \right)={sympy.latex(f)}"
+            # todo: f() in answer instead of f(x)
+            self.problems.append(fx)
+            self.solutions.append(eq)
 
 
 class HorizontalTangents(MathProb):
+    title = "Horizontal Tangents"
+    instructions = "Calculate the tangents"
+
     def __init__(self, var: str = "x"):
         super().__init__(var=var)
 
-    def make(self) -> Tuple[str, str]:
-        var = sympy.Symbol(self.get_variable())
-        df = sympy.prod([var - random.choice(digits_nozero) for i in range(random.randint(2, 3))])
-        f = sympy.integrate(df, var)
-        eqn = sympy.Eq(sympy.diff(f, var), 0)
-        fx = "f \\left(%s \\right)" % str(var)
-        return render(f, fx), render(', '.join([str(var) + "=" + str(i) for i in sympy.solve(eqn)]))
+    def add_problem(self, n: int):
+        for i in range(n):
+            var = sympy.Symbol(self.get_variable())
+            df = sympy.prod([var - random.choice(digits_nozero) for i in range(random.randint(2, 3))])
+            f = sympy.integrate(df, var)
+            eqn = sympy.Eq(sympy.diff(f, var), 0)
+            fx = fr"f\left({var.name}\right)={sympy.latex(f)}"
+            self.problems.append(fx)
+            self.solutions.append(
+                ', '.join([str(var) + "=" + str(i) for i in sympy.solve(eqn)])
+            )
 
 
 class ChainRule(MathProb):
+    title = "Differentiation - Chain Rule"
+    instructions = "calculate the derivatives of the following expressions"
+
     def __init__(
             self,
             var: str = "x",
@@ -80,46 +91,49 @@ class ChainRule(MathProb):
         super().__init__(var=var)
         self.partial = partial
 
-    def make(self) -> Tuple[str, str]:
-        var = sympy.Symbol(self.get_variable())
-        f1 = random.choice(_functions)
-        f2 = random.choice(_functions)
-        f3 = random.choice(_functions)
-
-        eq = f2(f1(var)) + f3(var)
-
-        sol = sympy.latex(sympy.diff(eq, var))
-        eq = sympy.latex(sympy.Derivative(eq, var))
-        if not self.partial:
-            eq = 'd'.join(eq.split("\\partial"))
-        eq = "$$" + eq + "$$"
-        sol = "$$" + sol + "$$"
-        return eq, sol
+    def add_problem(self, n: int):
+        for i in range(n):
+            var = sympy.Symbol(self.get_variable())
+            f1 = random.choice(_functions)
+            f2 = random.choice(_functions)
+            f3 = random.choice(_functions)
+            eq = f2(f1(var)) + f3(var)
+            sol = sympy.latex(sympy.diff(eq, var))
+            eq = sympy.latex(sympy.Derivative(eq, var))
+            # todo: what is this all about
+            if not self.partial:
+                eq = r'd'.join(eq.split(r"\partial"))
+            self.problems.append(eq)
+            self.solutions.append(sol)
 
 
 class QuotientRule(MathProb):
+    title = "Differentiation - Quotient Rule"
+    instructions = "calculate the derivatives of the following expressions"
+
     def __init__(self, var: str = "x", partial: bool = False):
         super().__init__(var=var)
         self.partial = partial
 
-    def make(self):
-        var = sympy.Symbol(self.get_variable())
-        f1 = random.choice(_functions)
-        f2 = random.choice(_functions)
-        f3 = random.choice(_functions)
-
-        eq = (f1(var) + f2(var)) / f3(var)
-
-        sol = sympy.latex(sympy.diff(eq, var))
-        eq = sympy.latex(sympy.Derivative(eq, var))
-        if not self.partial:
-            eq = 'd'.join(eq.split("\\partial"))
-        eq = "$$" + eq + "$$"
-        sol = "$$" + sol + "$$"
-        return eq, sol
+    def add_problem(self, n: int):
+        for i in range(n):
+            var = sympy.Symbol(self.get_variable())
+            f1 = random.choice(_functions)
+            f2 = random.choice(_functions)
+            f3 = random.choice(_functions)
+            eq = (f1(var) + f2(var)) / f3(var)
+            sol = sympy.latex(sympy.diff(eq, var))
+            eq = sympy.latex(sympy.Derivative(eq, var))
+            if not self.partial:
+                eq = r'd'.join(eq.split(r"\partial"))
+            self.problems.append(eq)
+            self.solutions.append(sol)
 
 
 class PolyRatioLimit(MathProb):
+    title = "Limits"
+    instructions = "calculate the limits of the following expressions"
+
     def __init__(self, var: str = "x", s=None):
         super().__init__(var=var)
         if s is not None:
@@ -154,7 +168,7 @@ class PolyRatioLimit(MathProb):
             raise ValueError(f"invalid value for s: {s}")
         return p1, p2
 
-    def make(self) -> Tuple[str, str]:
+    def add_problem(self, n: int):
         """
         Generates a ratio of two polynomials, and evaluates them at infinity.
 
@@ -163,21 +177,21 @@ class PolyRatioLimit(MathProb):
             a list of possible charectors. A random selection will be made from them.
 
         """
-        var = sympy.Symbol(self.get_variable())
-        p1, p2 = self.get_limit_mode()
-        # this is so that the fraction doesnt cancel to 1
-        last_coeffs = self.get_coeffs(n=2, start=-26, stop=26, unique=True)
-        num_coeffs = [last_coeffs[0]]
-        if p1 != 1:
-            num_coeffs += self.get_coeffs(n=p1-1, start=0, stop=9, unique=True, include_zero=False)
-        num = sum([k * var ** i for i, k in enumerate(num_coeffs)])
-        denom_coeffs = [last_coeffs[1]]
-        if p2 != 1:
-            denom_coeffs += self.get_coeffs(n=p2-1, start=0, stop=9, unique=True, include_zero=False)
-        denom = sum([k * var ** i for i, k in enumerate(denom_coeffs)])
-        e = num / denom
-        s = sympy.limit(e, var, sympy.oo)
-        logger.debug(f"limit of expression: {s}")
-        e = "$$ \\lim_{x \\to \\infty}" + sympy.latex(e) +" $$"
-        logger.debug(f"generated expression: {e}")
-        return e, render(s)
+        for i in range(n):
+            var = sympy.Symbol(self.get_variable())
+            p1, p2 = self.get_limit_mode()
+            # this is so that the fraction doesnt cancel to 1
+            last_coeffs = self.get_coeffs(n=2, start=-26, stop=26, unique=True)
+            num_coeffs = [last_coeffs[0]]
+            if p1 != 1:
+                num_coeffs += self.get_coeffs(n=p1-1, start=0, stop=9, unique=True, include_zero=False)
+            num = sum([k * var ** i for i, k in enumerate(num_coeffs)])
+            denom_coeffs = [last_coeffs[1]]
+            if p2 != 1:
+                denom_coeffs += self.get_coeffs(n=p2-1, start=0, stop=9, unique=True, include_zero=False)
+            denom = sum([k * var ** i for i, k in enumerate(denom_coeffs)])
+            e = num / denom
+            s = sympy.limit(e, var, sympy.oo)
+            e = r"\lim_{x \to \infty}" + sympy.latex(e)
+            self.problems.append(e)
+            self.solutions.append(sympy.latex(s))

@@ -1,4 +1,6 @@
 from examgen.lib.docparts import LatexDoc
+from examgen.lib.constants import logger
+from pprint import pformat
 
 
 class Worksheet:
@@ -18,10 +20,6 @@ class Worksheet:
     def add_section(
             self,
             prob_generator,
-            n: int,
-            title: str,
-            instructions: str,
-            cols: int = 2,
     ) -> None:
         """
         Method for adding a section of problems to an worksheet & solutions.
@@ -31,21 +29,12 @@ class Worksheet:
         title : title text for the section
         instructions : text instructions for the section
         """
-        s_probs, s_sols = [], []
-        for i in range(n):
-            p, sols = prob_generator.make()
-            if not isinstance(sols, list):
-                sols = [sols]
-            prob = "\\item " + p
-            sols = "\\item" + ', '.join(sols)
-            s_sols.append(sols)
-            s_probs.append(prob)
-
-        s_probs = '\n'.join(s_probs)
-        s_sols = '\n'.join(s_sols)
-        self.worksheet.add_section(title=title, instructions=instructions, content=s_probs, cols=cols)
-        self.solutions.add_section(title=title, content=s_sols, cols=cols)
+        p, sols = prob_generator.to_json()
+        logger.debug(pformat(p, indent=2))
+        logger.debug(pformat(sols, indent=2))
+        self.worksheet.add_section(chapter=p)
+        self.solutions.add_section(chapter=sols)
 
     def write(self):
-        self.worksheet.generate_pdf(filepath=self.fname)
-        self.solutions.generate_pdf(filepath=f"sols_{self.fname}")
+        self.worksheet.generate_pdf(filepath=self.fname, clean_tex=False)
+        self.solutions.generate_pdf(filepath=f"sols_{self.fname}", clean_tex=False)

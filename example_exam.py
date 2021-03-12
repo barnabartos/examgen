@@ -7,57 +7,42 @@ from examgen.lib.calc import QuotientRule, \
 from examgen.lib.algebra import LinearEq, QuadraticEq, RationalPolySimplify
 
 # make an exam with a filename and title
-myexam = Worksheet("example_worksheet", "Example worksheet 1", savetex=True)
+ws = Worksheet("example_worksheet", "Example worksheet 1", savetex=True)
 
-# add some problem sections 
-myexam.add_section(
-    prob_generator=LinearEq(var="xyz"),
-    n=20,
-    title="Linear equations",
-    instructions="Solve the following equations for the specified variable."
-)
-myexam.add_section(
-    prob_generator=QuadraticEq(var="xyz"),
-    n=20,
-    title="Quadratic equations",
-    instructions="Solve the following quadratic equations."
-)
-myexam.add_section(
-    prob_generator=RationalPolySimplify(var="xyz"),
-    n=5,
-    title="simplify the expressions",
-    instructions=""
-)
-myexam.add_section(
-    prob_generator=QuotientRule(var="xyz"),
-    n=10,
-    title="Compute the derivative",
-    instructions=""
-)
-myexam.add_section(
-    prob_generator=ChainRule(var="xyz"),
-    n=10,
-    title="Compute the derivative",
-    instructions=""
-)
-myexam.add_section(
-    prob_generator=FindDerivative(var="xyz"),
-    n=10,
-    title="Compute the derivative",
-    instructions=""
-)
-myexam.add_section(
-    prob_generator=PolyRatioLimit(var="xyz"),
-    n=10,
-    title="Find the limit",
-    instructions=""
-)
-myexam.add_section(
-    prob_generator=HorizontalTangents(var="xyz"),
-    n=10,
-    title="asdf",
-    instructions=""
-)
+lin = LinearEq(var="A")
+lin.add_problem(n=4)
 
+quad = QuadraticEq(var="B")
+quad.add_integer_radicals(n=2)
+quad.add_real_radicals(n=2)
+quad.shuffle()
+
+poly = RationalPolySimplify(var="C")
+poly.add_problem(n=4)
+
+der1 = FindDerivative(var="D")
+der1.add_problem(n=4)
+
+der2 = ChainRule(var="E")
+der2.add_problem(n=4)
+
+der3 = QuotientRule(var="F")
+der3.add_problem(n=4)
+
+tangents = HorizontalTangents(var="G")
+tangents.add_problem(n=4)
+
+limit = PolyRatioLimit(var="H")
+limit.add_problem(n=4)
+
+ws.add_section(prob_generator=lin)
+ws.add_section(prob_generator=quad)
+ws.add_section(prob_generator=poly)
+ws.add_section(prob_generator=der1)
+ws.add_section(prob_generator=der2)
+ws.add_section(prob_generator=der3)
+ws.add_section(prob_generator=tangents)
+ws.add_section(prob_generator=limit)
+ws.write()
 # generate the exam and solutions pdf
-myexam.write()
+ws.write()

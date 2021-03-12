@@ -14,6 +14,7 @@ eventually turn into a standalone one. Contributors are welcome!
 - Python 3.6+
 - Sympy
 - pylatex
+- jsonschema
 - LaTeX
 
 # Quickstart Example
