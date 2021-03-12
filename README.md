@@ -21,21 +21,19 @@ eventually turn into a standalone one. Contributors are welcome!
 
 ```Python
 from examgen.worksheet import Worksheet
-from examgen.lib.algebra import LinearEq
+from examgen.lib.algebra import QuadraticEq
 
-# make an exam with a filename and title
-myexam = Worksheet("algebra1", "Algebra 101 worksheet 1", savetex=True)
+ws = Worksheet(fname="example_worksheet", title="Example worksheet 1")
 
-# add some problem sections 
-myexam.add_section(
-    prob_generator=LinearEq(),
-    n=20,
-    title="Linear equations",
-    instructions="Solve the following equations for the specified variable."
-)
+quad = QuadraticEq(var="x")
+quad.add_integer_radicals(n=2)
+quad.add_real_radicals(n=2)
+quad.shuffle()
+
+ws.add_section(prob_generator=quad)
 
 # generate the exam and solutions pdf
-myexam.write()
+ws.write()
 ```
 Running this code will generate algebra1.pdf and 
 sols_algebra1.pdf. The LaTeX `.tex`, `.log` and
@@ -44,7 +42,11 @@ save the `.tex` files for further modifications, pass the `savetex` flag when
 making your exam:
 
 ```Python
-myexam = Worksheet("algebra1", "Algebra 101 exam 1", savetex=True)
+myexam = Worksheet(
+    fname="example_worksheet",
+    title="Example worksheet 1",
+    savetex=True
+)
 ```
 
 The prob_generator argument takes a problem generating object. The classes for
@@ -64,25 +66,26 @@ If you need problems in your project that are not provided by the module,
 you can implement your own problem classes.
 
 Problem generating classes have to inherit `examgen.lib.base_classes.MathProb`, and implement
-a `make` method. This method have to return a tuple of two LaTeX-compatible strings.
-The first string is the problem generated, the second is
-the corresponding solution. 
-
+an `add_problem` method. This method have to append a problem and a solution as
+LaTeX-compatible strings to attributes `problems` and `solutions` respectively, which
+are defined in the base class.
 So for example, you can define a custom generating class something like this:
 
 ```python
-from examgen.lib.algebra.base_classes import MathProb
+from examgen.lib.base_classes import MathProb
 
 class MyProblem(MathProb):
     def __init__(self, my_argument: int = 2):
         super().__init__()
         self.my_argument = my_argument 
     
-    def make(self):
+    def add_problem(self, n:int):
         """this function implements the problem my_argument+2 = something"""
-        var = self.get_variable()
-        solution = self.my_argument + 2
-        return f"$${var} = {self.my_argument}+2$$", f"{var}={solution}"
+        for i in range(n):
+            var = self.get_variable()
+            solution = self.my_argument + 2
+            self.problems.append(f"$${var} = {self.my_argument}+2$$")
+            self.solutions.append(f"{var}={solution}")
 ```
 
 The base class MathProb has method `get_variable`, which returns a string containing
@@ -99,9 +102,12 @@ a math problem, being too similar to 0 or 1.
 an example of a custom problem with custom variables:
 
 ```python
-from examgen.lib.algebra.base_classes import MathProb
+from examgen.lib.base_classes import MathProb
+from examgen.worksheet import Worksheet
 
 class MyProblem(MathProb):
+    title = "adding 2 to something"
+    instructions = "solve the following exercises"
     def __init__(
             self,
             var="x",
@@ -110,66 +116,39 @@ class MyProblem(MathProb):
         super().__init__(var=var)
         self.my_argument = my_argument 
         
-    def make(self):
+    def add_problem(self, n:int):
         """this function implements the problem my_argument+2 = something"""
-        var = self.get_variable()
-        solution = self.my_argument + 2
-        return f"$${var} = {self.my_argument}+2$$", f"{var}={solution}"
+        for i in range(n):
+            var = self.get_variable()
+            solution = self.my_argument + 2
+            self.problems.append(f"$${var} = {self.my_argument}+2$$")
+            self.solutions.append(f"{var}={solution}")
 
 
 # this will use the default variable "x"
 prob1 = MyProblem()
+prob1.add_problem(n=1)
 
 # this will use the set variable "a"
 prob2 = MyProblem(var="a")
+prob2.add_problem(n=1)
 
 # this will use a random selection from the provided list:
-prob3 = MyProblem(var=["a", "b", "c"])
-
+prob3 = MyProblem(var="abc")
+prob3.add_problem(n=1)
 # this will use a random selection from the builtin list:
 prob4 = MyProblem(var=None)
+prob4.add_problem(n=1)
 
-myexam = Worksheet("myexam", "Adding 2 to different numbers")
+myexam = Worksheet(fname="myexam", title="Adding 2 to different numbers")
 
-myexam.add_section(
-    prob_generator=prob1,
-    n=1,
-    title="problem with variable x",
-    instructions=""
-)
-myexam.add_section(
-    prob_generator=prob2,
-    n=1,
-    title="problem with variable a",
-    instructions=""
-)
-myexam.add_section(
-    prob_generator=prob1,
-    n=1,
-    title="problem with variable a or b or c",
-    instructions=""
-)
-myexam.add_section(
-    prob_generator=prob1,
-    n=1,
-    title="problem with random variable",
-    instructions=""
-)
+myexam.add_section(prob_generator=prob1)
+myexam.add_section(prob_generator=prob2)
+myexam.add_section(prob_generator=prob1)
+myexam.add_section(prob_generator=prob1)
 
 myexam.write()
 ```
-
-
-`MyProblem(MathProb)`, that has a method
-`(arg1, arg2=val)` with
-required argument `arg1` and keyword argument `arg2`, you can add a section of
-15 problems of this type to your exam by calling:
-
-```Python
-myexam..add_section(my_problem, 15, "Cool problems",
-                 "Solve these problems", arg1_val, arg2=arg2_val)
-```
-
 # Goals
 
 Over time, I plan on implementing the following things:
