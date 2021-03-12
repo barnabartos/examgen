@@ -9,33 +9,16 @@ from examgen.lib.schema import chapter
 
 
 @pytest.mark.parametrize(
-    argnames=["fix_problem_object"],
+    argnames="fix_problem_object",
     argvalues=[
-        (
-                [algebra.LinearEq()]
-        ),
-        (
-                [algebra.QuadraticEq()]
-        ),
-        (
-                [algebra.RationalPolySimplify()]
-        ),
-        (
-                [calc.FindDerivative()]
-        ),
-        (
-                [calc.PolyRatioLimit()]
-        ),
-        (
-                [calc.QuotientRule()]
-        ),
-        (
-                [calc.ChainRule()]
-        ),
-        (
-                [calc.HorizontalTangents()]
-        )
-
+        (algebra.LinearEq, {"var": "x"}),
+        (algebra.QuadraticEq, {}),
+        (algebra.RationalPolySimplify, {"var": "x"}),
+        (calc.FindDerivative, {}),
+        (calc.PolyRatioLimit, {}),
+        (calc.QuotientRule, {}),
+        (calc.ChainRule, {}),
+        (calc.HorizontalTangents, {})
     ],
     ids=[
         "linear_equation",
@@ -71,69 +54,73 @@ def test_output_schema(
     ],
     argvalues=[
         (
-                algebra.LinearEq(var="x"),
+                (algebra.LinearEq, {"var": "x"}),
                 ("add_problem", [1]),
-                r"^.+=.+$",
+                r"^(\+?-?([0-9]+)?x?)+=(\+?-?([0-9]+)?x?)+$",
                 r"^x=-?([0-9]+|\\frac{[0-9]+}{[0-9]+})$"
         ),
         (
-                algebra.QuadraticEq(var="x"),
+                (algebra.QuadraticEq, {}),
                 ("add_integer_radicals", [1]),
-                r"^.+=0$",
-                r"^x=-?.+,x=-?.+$"
+                r"^-?([0-9]+)?x\^\{2\}\+?-?([0-9]+)?x\+?-?([0-9]+)?=0$",
+                r"^x=-?[0-9]+,x=-?[0-9]+$"
         ),
         (
-                algebra.QuadraticEq(var="x"),
+                (algebra.QuadraticEq, {}),
                 ("add_real_radicals", [1]),
-                r"^.+=0$",
-                r"^x=-?.+,x=-?.+$"
+                r"^-?([0-9]+)?x\^\{2\}\+?-?([0-9]+)?x\+?-?([0-9]+)?=0$",
+                r"^x=(-?\+?([0-9]|\\sqrt{[0-9]+}))+,x=(-?\+?([0-9]|\\sqrt{[0-9]+}))+$"
         ),
         (
-                algebra.RationalPolySimplify(var="x"),
+                (algebra.RationalPolySimplify, {"var": "x"}),
                 ("add_problem", [1]),
-                r"^\\frac{\\frac{.+}{.+}}{\\frac{.+}{.+}}$",
-                r"^\\frac{.+}{.+}$"
+                r"^\\frac{\\frac{-?([0-9]+)?x\^\{2\}\+?-?([0-9]+)?x\+?-?([0-9]+)?}" +
+                r"{-?([0-9]+)?x\^\{2\}\+?-?([0-9]+)?x\+?-?([0-9]+)?}}" +
+                r"{\\frac{-?([0-9]+)?x\^\{2\}\+?-?([0-9]+)?x\+?-?([0-9]+)?}" +
+                r"{-?([0-9]+)?x\^\{2\}\+?-?([0-9]+)?x\+?-?([0-9]+)?}}$",
+                r"^\\frac{-?([0-9]+)?x\^\{2\}\+?-?([0-9]+)?x\+?-?([0-9]+)?}" +
+                r"{-?([0-9]+)?x\^\{2\}\+?-?([0-9]+)?x\+?-?([0-9]+)?}$"
         ),
         (
-                calc.FindDerivative(),
+                (calc.FindDerivative, {}),
                 ("add_problem", [1]),
                 r"^f\\left\(x\\right\)=.+$",
                 r"^\\frac{d}{dx}f{\\left\(\\right\)}=.+$"
         ),
         (
-                calc.HorizontalTangents(),
+                (calc.HorizontalTangents, {}),
                 ("add_problem", [1]),
                 r"^f\\left\(x\\right\)=.+$",
                 r"^.+$"
         ),
         (
                 # todo: this is quite weak
-                calc.ChainRule(),
+                (calc.ChainRule, {}),
                 ("add_problem", [1]),
                 r"^\\frac{d}{dx}.+$",
                 r"^.+$"
         ),
         (
                 # todo: this is quite weak
-                calc.QuotientRule(),
+                (calc.QuotientRule, {}),
                 ("add_problem", [1]),
                 r"^\\frac{d}{dx}.+$",
                 r"^.+$"
         ),
         (
-                calc.PolyRatioLimit(s=0),
+                (calc.PolyRatioLimit, {"s": 0}),
                 ("add_problem", [1]),
                 r"^\\lim_{x\\to\\infty}\\frac{.+}{.+}$",
                 r"^0$"
         ),
         (
-                calc.PolyRatioLimit(s=1),
+                (calc.PolyRatioLimit, {"s": 1}),
                 ("add_problem", [1]),
                 r"^\\lim_{x\\to\\infty}\\frac{.+}{.+}$",
                 r"^(\\frac{[0-9]+}{[0-9]+}|[0-9]+)$"
         ),
         (
-                calc.PolyRatioLimit(s=2),
+                (calc.PolyRatioLimit, {"s": 2}),
                 ("add_problem", [1]),
                 r"^\\lim_{x\\to\\infty}\\frac{.+}{.+}$",
                 r"^-?\\infty$"

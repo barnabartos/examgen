@@ -46,7 +46,9 @@ class FindDerivative(MathProb):
         for i in range(n):
             func = sympy.Function("f")
             var = sympy.Symbol(self.get_variable())
-            f = sympy.prod([var - i for i in self.get_coeffs(n=random.randint(2, 3), start=-10, stop=10)]).expand()
+            f = sympy.prod(
+                [var - i for i in self.get_coeffs(n=random.randint(2, 3), start=-10, stop=10, unique=True)]
+            ).expand()
             df = sympy.diff(f, var)
             eq = sympy.latex(sympy.Derivative(func(), var))
             eq = r'd'.join(eq.split(r"\partial"))

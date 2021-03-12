@@ -9,7 +9,7 @@ from examgen.lib.base_classes import MathProb
 @pytest.fixture()
 def fix_problem_object(request) -> MathProb:
     """creates a Worksheet object"""
-    return request.param
+    return request.param[0](**request.param[1])
 
 
 @pytest.fixture()

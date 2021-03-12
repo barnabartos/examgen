@@ -6,11 +6,7 @@ from sympy.parsing.sympy_parser import parse_expr
 import random
 
 from examgen.lib.base_classes import MathProb
-
-# i reimplemented the original functions naively as classes, to be initialized before
-# passing to Worksheet, eliminating the need for *args and ** quargs, while
-# changing the least things possible. a principled
-# refactoring will be needed later!
+from examgen.lib.constants import logger
 
 
 class QuadraticEq(MathProb):
@@ -37,6 +33,10 @@ class QuadraticEq(MathProb):
         super().__init__(var=var)
 
     def add_integer_radicals(self, n: int):
+        """
+        generates equations of form (x-x1)(x-x2)=0
+        exactly 2 integer radicals
+        """
         for i in range(n):
             var = sympy.Symbol(name=self.get_variable())
             # limits are arbitrary, this is what previous code used
@@ -50,12 +50,18 @@ class QuadraticEq(MathProb):
             )
 
     def add_real_radicals(self, n: int):
+        """
+        generates equations based on x^2-(x1+x2)+x1*x2 = 0
+        where x1=a+sqrt(b), x2=a-sqrt(b), where b is a positive prime
+        exactly 2 non-integer radicals
+        """
         # todo: this is buggy!!!
         for i in range(n):
             var = sympy.Symbol(name=self.get_variable())
             # todo: limiting it for exactly 2 radicals for now
-            c1, c2 = self.get_coeffs(n=2, start=-26, stop=26, unique=True)
-            lhs = c1 * var ** 2 + c2 * var + floor(c2 ** 2 / (4 * c1)) - 1
+            c1 = self.get_coeffs(n=1, start=-10, stop=10, unique=True)[0]
+            c2 = sympy.randprime(a=2, b=9)
+            lhs = var**2 - 2*c1*var + c1**2-c2
             e = sympy.Eq(lhs=lhs, rhs=0)
             self.problems.append(sympy.latex(e))
             self.solutions.append(
