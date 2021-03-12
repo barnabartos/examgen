@@ -7,7 +7,7 @@ from examgen.lib.calc import QuotientRule, \
 from examgen.lib.algebra import LinearEq, QuadraticEq, RationalPolySimplify
 
 # make an exam with a filename and title
-ws = Worksheet("example_worksheet", "Example worksheet 1", savetex=True)
+ws = Worksheet(fname="example_worksheet", title="Example worksheet 1")
 
 lin = LinearEq(var="A")
 lin.add_problem(n=4)
