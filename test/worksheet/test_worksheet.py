@@ -44,7 +44,6 @@ def test_example():
     ws.add_section(prob_generator=der3)
     ws.add_section(prob_generator=tangents)
     ws.add_section(prob_generator=limit)
-    ws.write()
     # generate the exam and solutions pdf
     ws.write()
 
