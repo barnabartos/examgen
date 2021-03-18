@@ -10,7 +10,7 @@ from examgen.lib.algebra import LinearEq, QuadraticEq, RationalPolySimplify
 ws = Worksheet(fname="example_worksheet", title="Example worksheet 1")
 
 lin = LinearEq(var="A")
-lin.add_problem(n=4)
+lin.add_problem(n=2)
 
 quad = QuadraticEq(var="B")
 quad.add_integer_radicals(n=2)
@@ -18,22 +18,22 @@ quad.add_real_radicals(n=2)
 quad.shuffle()
 
 poly = RationalPolySimplify(var="C")
-poly.add_problem(n=4)
+poly.add_problem(n=3)
 
 der1 = FindDerivative(var="D")
-der1.add_problem(n=4)
+der1.add_problem(n=3)
 
 der2 = ChainRule(var="E")
-der2.add_problem(n=4)
+der2.add_problem(n=2)
 
 der3 = QuotientRule(var="F")
-der3.add_problem(n=4)
+der3.add_problem(n=2)
 
 tangents = HorizontalTangents(var="G")
-tangents.add_problem(n=4)
+tangents.add_problem(n=2)
 
 limit = PolyRatioLimit(var="H")
-limit.add_problem(n=4)
+limit.add_problem(n=2)
 
 ws.add_section(prob_generator=lin)
 ws.add_section(prob_generator=quad)
@@ -43,6 +43,5 @@ ws.add_section(prob_generator=der2)
 ws.add_section(prob_generator=der3)
 ws.add_section(prob_generator=tangents)
 ws.add_section(prob_generator=limit)
-ws.write()
 # generate the exam and solutions pdf
 ws.write()

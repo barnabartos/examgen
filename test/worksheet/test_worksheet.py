@@ -8,7 +8,7 @@ from examgen.lib.calc import PolyRatioLimit, \
 
 
 def test_example():
-    ws = Worksheet("example_worksheet", "Example worksheet 1", savetex=True)
+    ws = Worksheet("example_worksheet", "Example worksheet 1", cleantex=False)
 
     lin = LinearEq(var="A")
     lin.add_problem(n=4)
@@ -44,7 +44,6 @@ def test_example():
     ws.add_section(prob_generator=der3)
     ws.add_section(prob_generator=tangents)
     ws.add_section(prob_generator=limit)
-    ws.write()
     # generate the exam and solutions pdf
     ws.write()
 

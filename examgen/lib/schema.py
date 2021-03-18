@@ -5,28 +5,23 @@ chapter = {
     "type": "object",
     "properties": {
         "title": {"type": "string"},
+        "vspace": {"type": "integer"},
         "main": {
             "type": "object",
             "properties": {
                 "description": {"type": ["string", "null"]},
-                "equations": {
+                "parts": {
                     "type": "array",
-                    "items": {"type": "string"}
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "eq": {"type": "string"},
+                            "vspace": {"type": ["integer", "null"]}
+                        }
+                    }
                 }
             }
         },
         "footer": {"type": ["object", "null"]}
     }
 }
-
-jsonschema.validate(
-    instance={
-        "title": "asdf",
-        "main": {
-            "description": "i am a description",
-            "problems": ["a", "b", "c"]
-        },
-        "footer": None
-    },
-    schema=chapter
-)

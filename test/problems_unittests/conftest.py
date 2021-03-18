@@ -22,9 +22,10 @@ def fix_problem_method(
     method = getattr(fix_problem_object, request.param[0])
     logger.debug(f" calling method: {method}, with args: {request.param[1]}")
     method(*request.param[1])
-    prob_json, sol_json = fix_problem_object.to_json()
-    assert len(prob_json["main"]["equations"]) == 1, "please add only one problem"
-    assert len(sol_json["main"]["equations"]) == 1, "please add only one problem"
-    prob = prob_json["main"]["equations"][0]
-    sol = sol_json["main"]["equations"][0]
+    prob_json = fix_problem_object.get_problems()
+    sol_json = fix_problem_object.get_solutions()
+    assert len(prob_json["main"]["parts"]) == 1, "please add only one problem"
+    assert len(sol_json["main"]["parts"]) == 1, "please add only one problem"
+    prob = prob_json["main"]["parts"][0]["eq"]
+    sol = sol_json["main"]["parts"][0]["eq"]
     return prob, sol

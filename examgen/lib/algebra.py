@@ -31,6 +31,7 @@ class QuadraticEq(MathProb):
             not. Default is a random selection.
         """
         super().__init__(var=var)
+        self.vspace = "3cm"
 
     def add_integer_radicals(self, n: int):
         """
@@ -99,6 +100,7 @@ class LinearEq(MathProb):
 
         """
         super().__init__(var=var)
+        self.vspace = "3cm"
 
     def add_problem(self, n: int):
         # todo: for consistent behavior, i am limiting this to exactly 1 solution.
@@ -119,6 +121,7 @@ class RationalPolySimplify(MathProb):
 
     def __init__(self, var: str = "x"):
         super().__init__(var=var)
+        self.vspace = "3cm"
 
     def add_problem(self, n: int):
         """
