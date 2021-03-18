@@ -73,24 +73,22 @@ class MathProb:
     def add_problem(self, n: int):
         raise NotImplementedError("function add_problem is not implemented!")
 
-    def to_json(self):
-        # temporary implementation, likely to change
-        return [
-            {
-                "title": self.title,
-                "main": {
-                    "description": self.instructions,
-                    "parts": [{"eq": i, "vspace": self.vspace} for i in self.problems]
-                },
-                "footer": None
+    def get_problems(self):
+        return {
+            "title": self.title,
+            "main": {
+                "description": self.instructions,
+                "parts": [{"eq": i, "vspace": self.vspace} for i in self.problems]
             },
-            {
-                "title": self.title,
-                "main": {
-                    "description": None,
-                    "parts": [{"eq": i, "vspace": None} for i in self.solutions]
-                },
-                "footer": None
-            }
+            "footer": None
+        }
 
-        ]
+    def get_solutions(self):
+        return {
+            "title": self.title,
+            "main": {
+                "description": None,
+                "parts": [{"eq": i, "vspace": None} for i in self.solutions]
+            },
+            "footer": None
+        }

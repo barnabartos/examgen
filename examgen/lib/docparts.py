@@ -6,7 +6,7 @@ class Parts(Environment):
     """A base class that represents a Question."""
     omit_if_empty = True
 
-    def __init__(self, points: int = None):
+    def __init__(self):
         super(Parts, self).__init__()
 
     def add_part(self, s: str, points: int = None):
