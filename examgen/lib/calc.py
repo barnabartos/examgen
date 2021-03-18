@@ -41,6 +41,7 @@ class FindDerivative(MathProb):
     def __init__(self, var: str = "x", rhs: str = "4"):
         super().__init__(var=var)
         self.rhs = rhs
+        self.vspace = "2cm"
 
     def add_problem(self, n: int):
         for i in range(n):
@@ -65,6 +66,7 @@ class HorizontalTangents(MathProb):
 
     def __init__(self, var: str = "x"):
         super().__init__(var=var)
+        self.vspace = "3cm"
 
     def add_problem(self, n: int):
         for i in range(n):
@@ -90,6 +92,7 @@ class ChainRule(MathProb):
     ):
         super().__init__(var=var)
         self.partial = partial
+        self.vspace = "4cm"
 
     def add_problem(self, n: int):
         for i in range(n):
@@ -114,6 +117,7 @@ class QuotientRule(MathProb):
     def __init__(self, var: str = "x", partial: bool = False):
         super().__init__(var=var)
         self.partial = partial
+        self.vspace = "5cm"
 
     def add_problem(self, n: int):
         for i in range(n):
@@ -140,6 +144,7 @@ class PolyRatioLimit(MathProb):
             self.s = s
         else:
             self.s = [0, 1, 2]
+        self.vspace = "2cm"
 
     def get_limit_mode(self) -> Tuple[int, int]:
         """

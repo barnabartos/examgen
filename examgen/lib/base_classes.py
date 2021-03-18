@@ -1,10 +1,9 @@
-import logging
 import random
 from typing import List, Optional
 from random import choice, randrange, uniform
 from datetime import datetime, timedelta
 
-from examgen.lib.constants import ALPHA, logger
+from examgen.lib.constants import ALPHA
 
 
 class MathProb:
@@ -17,6 +16,7 @@ class MathProb:
     def __init__(self, var: Optional[str] = None) -> None:
         self.problems = []
         self.solutions = []
+        self.vspace = None
         if var is not None:
             if type(var) != str:
                 raise TypeError("var has to be a string")
@@ -73,16 +73,14 @@ class MathProb:
     def add_problem(self, n: int):
         raise NotImplementedError("function add_problem is not implemented!")
 
-    # def from_json(self):
-    #     raise NotImplementedError
-    #
     def to_json(self):
+        # temporary implementation, likely to change
         return [
             {
                 "title": self.title,
                 "main": {
                     "description": self.instructions,
-                    "equations": self.problems
+                    "parts": [{"eq": i, "vspace": self.vspace} for i in self.problems]
                 },
                 "footer": None
             },
@@ -90,7 +88,7 @@ class MathProb:
                 "title": self.title,
                 "main": {
                     "description": None,
-                    "equations": self.solutions
+                    "parts": [{"eq": i, "vspace": None} for i in self.solutions]
                 },
                 "footer": None
             }

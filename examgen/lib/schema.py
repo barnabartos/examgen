@@ -5,13 +5,20 @@ chapter = {
     "type": "object",
     "properties": {
         "title": {"type": "string"},
+        "vspace": {"type": "integer"},
         "main": {
             "type": "object",
             "properties": {
                 "description": {"type": ["string", "null"]},
-                "equations": {
+                "parts": {
                     "type": "array",
-                    "items": {"type": "string"}
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "eq": {"type": "string"},
+                            "vspace": {"type": ["integer", "null"]}
+                        }
+                    }
                 }
             }
         },
@@ -24,7 +31,11 @@ jsonschema.validate(
         "title": "asdf",
         "main": {
             "description": "i am a description",
-            "problems": ["a", "b", "c"]
+            "parts": [
+                {"eq": "a", "vspace": 1},
+                {"eq": "b", "vspace": 2},
+                {"eq": "c", "vspace": None},
+            ]
         },
         "footer": None
     },
