@@ -25,19 +25,3 @@ chapter = {
         "footer": {"type": ["object", "null"]}
     }
 }
-
-jsonschema.validate(
-    instance={
-        "title": "asdf",
-        "main": {
-            "description": "i am a description",
-            "parts": [
-                {"eq": "a", "vspace": 1},
-                {"eq": "b", "vspace": 2},
-                {"eq": "c", "vspace": None},
-            ]
-        },
-        "footer": None
-    },
-    schema=chapter
-)
