@@ -38,7 +38,8 @@ def test_output_schema(
     fix_problem_object
 ):
     """logs output for manual evaluation"""
-    problem, solution = fix_problem_object.to_json()
+    problem = fix_problem_object.get_problems()
+    solution = fix_problem_object.get_solutions()
     logger.debug(problem)
     logger.debug(solution)
     validate(instance=problem, schema=chapter)

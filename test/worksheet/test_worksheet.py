@@ -8,7 +8,7 @@ from examgen.lib.calc import PolyRatioLimit, \
 
 
 def test_example():
-    ws = Worksheet("example_worksheet", "Example worksheet 1", savetex=True)
+    ws = Worksheet("example_worksheet", "Example worksheet 1", cleantex=False)
 
     lin = LinearEq(var="A")
     lin.add_problem(n=4)
