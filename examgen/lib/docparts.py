@@ -1,5 +1,11 @@
 from pylatex import Document, Package, Command, NoEscape
 from pylatex.base_classes import Environment
+from enum import Enum
+
+
+class DocumentType(Enum):
+    EXAM = "exam"
+    SOLSKEY = "solskey"
 
 
 class Parts(Environment):
@@ -33,7 +39,11 @@ class Questions(Environment):
 
 
 class Exam(Document):
-    def __init__(self, title: str):
+    def __init__(
+            self,
+            title: str,
+            mode: DocumentType
+    ):
         super().__init__(
             documentclass="exam",
             document_options=["12pt", "addpoints"],
@@ -42,7 +52,12 @@ class Exam(Document):
         )
 
         self.brand = Command("textit", "https://github.com/barnabartos/examgen")
-        self.nameline = NoEscape(r"Name: \dotuline{\hspace{40mm}} \vspace{1mm}")
+        if mode == DocumentType.EXAM:
+            self.hright = NoEscape(r"Name: \dotuline{\hspace{40mm}} \vspace{1mm}")
+        elif mode == DocumentType.SOLSKEY:
+            self.hright = ""
+        else:
+            raise ValueError(f"mode needs to be DocumentType not {mode}")
         self.headtitle = NoEscape(title + r"\vspace{1mm}")
         self.pgnum = Command("textbf", NoEscape(r"\thepage/\pageref{LastPage}"))
         self.date = Command("textit", Command("today"))
@@ -68,18 +83,11 @@ class Exam(Document):
                 ]
             )
         )
-        self.preamble.append(Command("firstpageheader", arguments=[self.headtitle, "", self.nameline]))
-        self.preamble.append(Command("runningheader", arguments=[self.headtitle, "", self.nameline]))
+        self.preamble.append(Command("firstpageheader", arguments=[self.headtitle, "", self.hright]))
+        self.preamble.append(Command("runningheader", arguments=[self.headtitle, "", self.hright]))
         self.preamble.append(NoEscape(r"\runningheadrule"))
         self.preamble.append(NoEscape(r"\firstpageheadrule"))
         self.preamble.append(Command("firstpagefooter", arguments=[self.brand, self.pgnum, self.date]))
         self.preamble.append(Command("runningfooter", arguments=[self.brand, self.pgnum, self.date]))
         self.preamble.append(NoEscape(r"\runningfootrule"))
         self.preamble.append(NoEscape(r"\firstpagefootrule"))
-
-    def add_sections(self, chapters):
-        with self.create(Questions()) as q:
-            for chapter in chapters:
-                q.add_question(chapter)
-
-

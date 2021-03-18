@@ -1,4 +1,4 @@
-from examgen.lib.docparts import Exam, Questions
+from examgen.lib.docparts import Exam, Questions, DocumentType
 from examgen.lib.constants import logger
 from pprint import pformat
 
@@ -25,8 +25,8 @@ class Worksheet:
         self.chapters.append(prob_generator)
 
     def write(self):
-        worksheet = Exam(title=self.title)
-        solutions = Exam(title=self.title + " Solutions")
+        worksheet = Exam(title=self.title, mode=DocumentType.EXAM)
+        solutions = Exam(title=self.title + " Solutions", mode=DocumentType.SOLSKEY)
         # todo: investigate performace / mem usage
         with worksheet.create(Questions()) as q:
             for chapter in self.chapters:
