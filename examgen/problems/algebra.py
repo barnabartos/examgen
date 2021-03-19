@@ -1,12 +1,8 @@
-from typing import Optional, Tuple
-from math import floor
-
 import sympy
 from sympy.parsing.sympy_parser import parse_expr
 import random
 
-from examgen.lib.base_classes import MathProb
-from examgen.lib.constants import logger
+from examgen.problems.base_classes import MathProb
 
 
 class QuadraticEq(MathProb):

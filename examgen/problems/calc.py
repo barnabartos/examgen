@@ -4,8 +4,8 @@ from functools import partial
 
 import sympy
 
-from examgen.lib.base_classes import MathProb
-from examgen.lib.constants import digits_nozero, render, logger
+from examgen.problems.base_classes import MathProb
+from examgen.constants import digits_nozero, logger
 
 
 def get_polynomial(n, x):

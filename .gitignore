@@ -6,7 +6,7 @@
 /venv
 /build
 /dist
-/examgen/*.tex
+*.tex
 /examgen/*.pdf
 *egg-info
 .coverage

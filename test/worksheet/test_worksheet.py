@@ -1,6 +1,6 @@
 from examgen.worksheet import Worksheet
-from examgen.lib.algebra import LinearEq, RationalPolySimplify, QuadraticEq
-from examgen.lib.calc import PolyRatioLimit, \
+from examgen.problems.algebra import LinearEq, RationalPolySimplify, QuadraticEq
+from examgen.problems.calc import PolyRatioLimit, \
     ChainRule, \
     FindDerivative, \
     HorizontalTangents, \

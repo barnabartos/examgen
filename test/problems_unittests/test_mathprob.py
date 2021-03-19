@@ -1,6 +1,6 @@
 import pytest
 
-from examgen.lib.base_classes import MathProb
+from examgen.problems.base_classes import MathProb
 
 
 # @pytest.mark.skip("slow and flaky. run manually as needed")

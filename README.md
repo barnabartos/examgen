@@ -21,7 +21,7 @@ eventually turn into a standalone one. Contributors are welcome!
 
 ```Python
 from examgen.worksheet import Worksheet
-from examgen.lib.algebra import QuadraticEq
+from examgen.problems.algebra import QuadraticEq
 
 ws = Worksheet(fname="example_worksheet", title="Example worksheet 1")
 
@@ -72,14 +72,15 @@ are defined in the base class.
 So for example, you can define a custom generating class something like this:
 
 ```python
-from examgen.lib.base_classes import MathProb
+from examgen.problems.base_classes import MathProb
+
 
 class MyProblem(MathProb):
     def __init__(self, my_argument: int = 2):
         super().__init__()
-        self.my_argument = my_argument 
-    
-    def add_problem(self, n:int):
+        self.my_argument = my_argument
+
+    def add_problem(self, n: int):
         """this function implements the problem my_argument+2 = something"""
         for i in range(n):
             var = self.get_variable()
@@ -102,21 +103,23 @@ a math problem, being too similar to 0 or 1.
 an example of a custom problem with custom variables:
 
 ```python
-from examgen.lib.base_classes import MathProb
+from examgen.problems.base_classes import MathProb
 from examgen.worksheet import Worksheet
+
 
 class MyProblem(MathProb):
     title = "adding 2 to something"
     instructions = "solve the following exercises"
+
     def __init__(
             self,
             var="x",
             my_argument: int = 2
     ):
         super().__init__(var=var)
-        self.my_argument = my_argument 
-        
-    def add_problem(self, n:int):
+        self.my_argument = my_argument
+
+    def add_problem(self, n: int):
         """this function implements the problem my_argument+2 = something"""
         for i in range(n):
             var = self.get_variable()

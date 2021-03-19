@@ -3,7 +3,7 @@ from typing import List, Tuple
 import pytest
 
 from test.constants import logger
-from examgen.lib.base_classes import MathProb
+from examgen.problems.base_classes import MathProb
 
 
 @pytest.fixture()

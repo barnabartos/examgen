@@ -1,6 +1,4 @@
-from examgen.lib.docparts import Exam, Questions, DocumentType
-from examgen.lib.constants import logger
-from pprint import pformat
+from examgen.io.docparts import Exam, Questions, DocumentType
 
 
 class Worksheet:

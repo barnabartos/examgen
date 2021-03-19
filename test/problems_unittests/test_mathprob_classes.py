@@ -4,8 +4,8 @@ import re
 from jsonschema import validate
 
 from test.constants import logger
-from examgen.lib import algebra, calc
-from examgen.lib.schema import chapter
+from examgen.problems import algebra, calc
+from examgen.io.schema import chapter
 
 
 @pytest.mark.parametrize(

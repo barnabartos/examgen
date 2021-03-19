@@ -1,10 +1,10 @@
 from examgen.worksheet import Worksheet
-from examgen.lib.calc import QuotientRule, \
+from examgen.problems.calc import QuotientRule, \
     ChainRule, \
     FindDerivative, \
     HorizontalTangents, \
     PolyRatioLimit
-from examgen.lib.algebra import LinearEq, QuadraticEq, RationalPolySimplify
+from examgen.problems.algebra import LinearEq, QuadraticEq, RationalPolySimplify
 
 # make an exam with a filename and title
 ws = Worksheet(fname="example_worksheet", title="Example worksheet 1")

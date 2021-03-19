@@ -3,7 +3,7 @@ from typing import List, Optional
 from random import choice, randrange, uniform
 from datetime import datetime, timedelta
 
-from examgen.lib.constants import ALPHA, logger
+from examgen.constants import ALPHA, logger
 
 
 class MathProb:
