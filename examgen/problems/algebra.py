@@ -1,8 +1,28 @@
+from enum import Enum
+
 import sympy
 from sympy.parsing.sympy_parser import parse_expr
 import random
 
 from examgen.problems.base_classes import MathProb
+
+
+class NumType(Enum):
+    ZERO = 1
+    ONE = 2
+    INT = 3
+    NON_ZERO_INT = 4
+    FRAC = 5
+    RANDOM = 6
+    INF = 7
+
+
+class SignType(Enum):
+    POSITIVE = 1
+    NEGATIVE = 2
+    NON_NEGATIVE = 3
+    NON_POSITIVE = 4
+    RANDOM = 6
 
 
 class QuadraticEq(MathProb):
@@ -98,7 +118,82 @@ class LinearEq(MathProb):
         super().__init__(var=var)
         self.vspace = "3cm"
 
-    def add_problem(self, n: int):
+    def add_simple_const_right(
+            self,
+            var_multiplied: bool = True,
+            coeff_mode: NumType = NumType.NONZERO_INT,
+            radical_mode: NumType = NumType.INT,
+            radical_sign: SignType = SignType.RANDOM
+    ):
+        if type(var_multiplied) != bool:
+            raise TypeError(f"var_multiplied should be of type bool, not {type(coeff_mode)}")
+        if type(coeff_mode) != NumType:
+            raise TypeError(f"coeff_mode should be of type NumType, not {type(coeff_mode)}")
+        if type(radical_mode) != NumType:
+            raise TypeError(f"radical_mode should be of type NumType, not {type(coeff_mode)}")
+        if type(radical_sign) != SignType:
+            raise TypeError(f"radical_sign should be of type SignType, not {type(coeff_mode)}")
+        if coeff_mode in [
+            NumType.ONE,
+            NumType.INF
+        ]:
+            raise NotImplementedError(f"coeff_mode {coeff_mode} is not supported")
+        if radical_mode in [
+            NumType.ONE,
+            NumType.INF
+        ]:
+            raise NotImplementedError(f"radical_mode {radical_mode} is not supported")
+        if radical_sign in [
+            SignType.NON_NEGATIVE,
+            SignType.NON_POSITIVE
+        ]:
+            raise NotImplementedError(f"radical_sign {radical_mode} is not supported")
+
+        if radical_mode == NumType.RANDOM:
+            radical_mode = random.choice([NumType.INT, NumType.NON_ZERO_INT, NumType.FRAC])
+
+        if radical_mode == NumType.NON_ZERO_INT:
+            sol = self.get_coeffs(n=1, start=1, stop=10)
+        elif radical_mode == NumType.INT:
+            sol = self.get_coeffs(n=1, start=0, stop=10)
+        elif radical_mode == NumType.FRAC:
+            p, q = self.get_coeffs(n=2, start=1, stop=10, unique=True)
+            sol = sympy.Rational(p=p, q=q)
+        elif radical_mode == NumType.ZERO:
+            sol = 0
+        else:
+            raise ValueError(f"oops, radical mode {radical_mode} is not supported")
+
+        if radical_sign == (SignType.RANDOM and random.choice([0, 1])) or radical_sign == SignType.NEGATIVE:
+            sol = -sol
+
+        x = self.get_variable()
+        x = sympy.Symbol(name=x)
+        if var_multiplied:
+            if coeff_mode == NumType.FRAC:
+                p, q = self.get_coeffs(n=2, start=1, stop=10, unique=True)
+                c1 = sympy.Rational(p=p, q=q)
+            else:
+                c1 = self.get_coeffs(n=2, start=1, stop=10)[0]
+            ls = c1 * x
+        else:
+            ls = x
+
+        if coeff_mode == NumType.FRAC:
+            p, q = self.get_coeffs(n=2, start=-10, stop=10)
+            c2 = sympy.Rational(p=p, q=q)
+        else:
+            c2 = self.get_coeffs(n=2, start=-10, stop=10)[0]
+
+        eq = sympy.Eq(lhs=ls+c2, rhs=sol+c2)
+
+        self.problems.append(sympy.latex(eq))
+        self.solutions.append(f"{x.name}={sol}")
+
+    def add_problem(
+            self,
+            n: int,
+    ):
         # todo: for consistent behavior, i am limiting this to exactly 1 solution.
         # todo: implement no solution / infinite solution / parametrized later!
         for i in range(n):

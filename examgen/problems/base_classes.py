@@ -9,7 +9,6 @@ from examgen.constants import ALPHA, logger
 class MathProb:
     instructions = "set this to default description in children"
     title = "set this to default title in children"
-
     var = ALPHA
     TIMEOUT = timedelta(seconds=5)
 
