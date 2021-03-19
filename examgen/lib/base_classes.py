@@ -3,7 +3,7 @@ from typing import List, Optional
 from random import choice, randrange, uniform
 from datetime import datetime, timedelta
 
-from examgen.lib.constants import ALPHA
+from examgen.lib.constants import ALPHA, logger
 
 
 class MathProb:
@@ -69,6 +69,15 @@ class MathProb:
                     continue
             ret.append(num)
         return ret
+
+    def add_custom_problem(self, problem: str, solution: str):
+        logger.warning(
+            f"added custom exercise. \n problem: {problem}, solution {solution}\n" +
+            "Custom exercises are not checked for correctness or LaTex compatibility, " +
+            "by examgen, be careful!"
+        )
+        self.problems.append(problem)
+        self.solutions.append(solution)
 
     def add_problem(self, n: int):
         raise NotImplementedError("function add_problem is not implemented!")

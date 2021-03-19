@@ -11,6 +11,10 @@ ws = Worksheet(fname="example_worksheet", title="Example worksheet 1")
 
 lin = LinearEq(var="A")
 lin.add_problem(n=2)
+lin.add_custom_problem(
+    problem=r"2*r*\pi = 6.28",
+    solution=r"r=1"
+)
 
 quad = QuadraticEq(var="B")
 quad.add_integer_radicals(n=2)

@@ -11,7 +11,11 @@ def test_example():
     ws = Worksheet("example_worksheet", "Example worksheet 1", cleantex=False)
 
     lin = LinearEq(var="A")
-    lin.add_problem(n=4)
+    lin.add_problem(n=3)
+    lin.add_custom_problem(
+        problem=r"2*r*\pi = 6.28",
+        solution=r"r=1"
+    )
 
     quad = QuadraticEq(var="B")
     quad.add_integer_radicals(n=2)
